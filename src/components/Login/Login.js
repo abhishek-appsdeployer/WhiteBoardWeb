@@ -1,45 +1,60 @@
 import React,{useState} from 'react'
 import "./Login.css"
-import { Link } from 'react-router-dom'
+import { Link ,useNavigate} from 'react-router-dom';
+import axios from 'axios'; // Import Axios
+import jwt_decode from "jwt-decode";
 
 const Login = () => {
+  const navigate=useNavigate()
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [passwordErr, setPasswordErr] = useState('');
-  const [confirmPasswordErr, setConfirmPasswordErr] = useState('');
 
-  const handleSignup = (e) => {
+
+  const handleSignup = async (e) => {
     e.preventDefault();
-    // Do any necessary validation or API calls here
+    // Do any necessary validation here
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      
-      setEmailErr("Please enter a valid email address")
-      
+      setEmailErr("Please enter a valid email address");
     }
-    else if(password=="")
-    {
-        setEmailErr("")
-        setPasswordErr("Empty password")
+    else if (password === "") {
+      setEmailErr("");
+      setPasswordErr("Empty password");
     }
-    else if(confirmPassword=="")
-    {
-        setPasswordErr("")
-        setConfirmPasswordErr("Empty confirm password")
+    else {
+      try {
+        const response = await axios.post('http://task.consdeployer.com/api/users/login',{ email, password });
+        console.log(response)
+        const token = response.data.token; // Extract token from response
+        // const decodedToken = jwt_decode(token); // Decode token using jwt_decode library (imported separately)
+        console.log('Decoded Token:', token); // Log the decoded token to the console
+        setEmailErr("");
+        setPasswordErr("");
+        if (response.data.success)
+        {
+          alert(`Login Successful!`);
+          
+          var info =jwt_decode(response.data.token)
+          console.log(info)
+          localStorage.setItem("User", JSON.stringify(info));
+          navigate("/dashboard")
+        }
+        else
+        {
+          
+          setPasswordErr("Invalid credentials")
+        }
+        
+      } catch (error) {
+        console.error('Error:', error);
+        alert("Invalid details")
+        // Handle any error responses from the API here
+      }
     }
-    else if (password !=confirmPassword)
-    {
-        setConfirmPasswordErr("password and confirmpassord not same")
-    }
-    else
-    {
-setConfirmPasswordErr("")
-   
-    alert(`Email: ${email}\nPassword: ${password}\nConfirm Password: ${confirmPassword}`);
-    } 
-}
+  }
 
   return (
     <div class="">

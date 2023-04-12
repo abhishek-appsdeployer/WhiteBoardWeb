@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 // import "./Login.css"
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Emailverify = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [emailErr, setEmailErr] = useState('');
-  const [passwordErr, setPasswordErr] = useState('');
-  const [confirmPasswordErr, setConfirmPasswordErr] = useState('');
-
-  const handleEmailverify = (e) => {
+  const navigate = useNavigate();
+  const handleEmailverify = async(e) => {
     e.preventDefault();
     // Do any necessary validation or API calls here
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,26 +16,35 @@ const Emailverify = () => {
       setEmailErr("Please enter a valid email address")
       
     }
-    else if(password=="")
-    {
-        setEmailErr("")
-        setPasswordErr("Empty password")
-    }
-    else if(confirmPassword=="")
-    {
-        setPasswordErr("")
-        setConfirmPasswordErr("Empty confirm password")
-    }
-    else if (password !=confirmPassword)
-    {
-        setConfirmPasswordErr("password and confirmpassord not same")
-    }
+   
+    
     else
     {
-setConfirmPasswordErr("")
+
+try {
+    // Call the API to verify email
+    const datas={
+      "email":email,
+      "account_type":"Normal"
+  }
+    const response = await axios.post('http://task.consdeployer.com/api/users/emailverification',datas);
+    const data = response.data;
+    if (data.success) {
+      // If API response is successful, navigate to signup page
+      alert("Verification done")
+      navigate('/signup');
+    } else {
+      // If API response is not successful, show error message
+      setEmailErr("Email verification failed. Please try again.");
+    }
+  } catch (error) {
+    console.error(error);
+    setEmailErr("An error occurred. Please try again.");
+  }
+
+}
    
-    alert(`Email: ${email}\nPassword: ${password}\nConfirm Password: ${confirmPassword}`);
-    } 
+    
 }
 
   return (

@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 // import "./Login.css"
-import { Link } from 'react-router-dom';
-
+import { Link ,useNavigate} from 'react-router-dom';
+import axios from 'axios';
 const Signup = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [passwordErr, setPasswordErr] = useState('');
-  const [confirmPasswordErr, setConfirmPasswordErr] = useState('');
-
-  const handleSignup = (e) => {
+  const [userNameErr, setUserNameErr] = useState('');
+  const [userName,setUserName]=useState("")
+  
+  const handleSignup =async (e) => {
     e.preventDefault();
     // Do any necessary validation or API calls here
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -24,20 +26,29 @@ const Signup = () => {
         setEmailErr("")
         setPasswordErr("Empty password")
     }
-    else if(confirmPassword=="")
+    else if(userName=="")
     {
         setPasswordErr("")
-        setConfirmPasswordErr("Empty confirm password")
+        setUserNameErr("User Name missing")
     }
-    else if (password !=confirmPassword)
-    {
-        setConfirmPasswordErr("password and confirmpassord not same")
-    }
-    else
-    {
-setConfirmPasswordErr("")
-   
-    alert(`Email: ${email}\nPassword: ${password}\nConfirm Password: ${confirmPassword}`);
+    
+    else {
+      setUserNameErr("");
+      try {
+        // Send signup data to the API
+        const response = await axios.post('http://task.consdeployer.com/api/users/register', {
+          email: email,
+          password: password,
+          userName:userName
+        });
+        console.log(response)
+        // Handle successful signup
+        // Navigate to the login screen
+        navigate('/login');
+      } catch (error) {
+        // Handle error
+        console.error(error);
+      }
     } 
 }
 
@@ -75,10 +86,10 @@ setConfirmPasswordErr("")
           <br />
           {passwordErr ? <p className='text-danger'>{passwordErr}</p> : null}
           <label htmlFor="" className='my-2'>
-            <input type="password" placeholder="Confirm password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+            <input type="text" placeholder="User name" value={userName} onChange={(e) => setUserName(e.target.value)} />
           </label>
           <br />
-          {confirmPasswordErr ? <p className='text-danger'>{confirmPasswordErr}</p> : null}
+          {userNameErr ? <p className='text-danger'>{userNameErr}</p> : null}
           <button type="submit" className="">Sign up</button>
         </form>
 

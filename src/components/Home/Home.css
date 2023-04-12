@@ -1,0 +1,9 @@
+.main{
+    background-color: gray;
+    height: 100vh;
+}
+.wh{
+    justify-content: center;
+    align-items: center !important;
+    color: white;
+}
