@@ -39,7 +39,7 @@ const Dashboard = () => {
       <div>
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
-        <p>{boardName} Boards {index + 1}</p> {/* Fix the board name display */}
+        <p>{boardName} Boards name {index + 1}</p> {/* Fix the board name display */}
       </div>
     </Link>
   ));
