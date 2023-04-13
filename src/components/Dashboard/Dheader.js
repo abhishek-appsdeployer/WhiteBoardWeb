@@ -11,7 +11,7 @@ const Dheader = () => {
     console.log('Dashboard info', storedInfo);
     if (storedInfo) {
       const parsedInfo = JSON.parse(storedInfo);
-      setName(parsedInfo.userName);
+      setName(parsedInfo.username);
       setEmail(parsedInfo.email);
     }
   }, []);

@@ -36,10 +36,10 @@ const Signup = () => {
       setUserNameErr("");
       try {
         // Send signup data to the API
-        const response = await axios.post('http://task.consdeployer.com/api/users/register', {
+        const response = await axios.post('https://task.appdeployers.com/api/deployer/register', {
           email: email,
           password: password,
-          userName:userName
+          username:userName
         });
         console.log(response)
         // Handle successful signup

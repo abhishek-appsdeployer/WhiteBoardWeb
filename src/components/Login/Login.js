@@ -26,7 +26,7 @@ const Login = () => {
     }
     else {
       try {
-        const response = await axios.post('http://task.consdeployer.com/api/users/login',{ email, password });
+        const response = await axios.post('https://task.appdeployers.com/api/deployer/login',{ email, password });
         console.log(response)
         const token = response.data.token; // Extract token from response
         // const decodedToken = jwt_decode(token); // Decode token using jwt_decode library (imported separately)
@@ -37,9 +37,10 @@ const Login = () => {
         {
           alert(`Login Successful!`);
           
-          var info =jwt_decode(response.data.token)
-          console.log(info)
-          localStorage.setItem("User", JSON.stringify(info));
+          // var info =jwt_decode(response.data.token)
+          // console.log(info)
+          // localStorage.setItem("User", JSON.stringify(info));
+          localStorage.setItem("User", JSON.stringify(response.data.user))
           navigate("/dashboard")
         }
         else

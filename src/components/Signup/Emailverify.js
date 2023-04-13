@@ -27,7 +27,7 @@ try {
       "email":email,
       "account_type":"Normal"
   }
-    const response = await axios.post('http://task.consdeployer.com/api/users/emailverification',datas);
+    const response = await axios.post('https://task.appdeployers.com/api/deployer/emailverification',datas);
     const data = response.data;
     if (data.success) {
       // If API response is successful, navigate to signup page
