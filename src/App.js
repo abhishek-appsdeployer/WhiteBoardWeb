@@ -5,6 +5,7 @@ import Signup from './components/Signup/Signup'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Emailverify from './components/Signup/Emailverify';
 import Dashboard from './components/Dashboard/Dashboard';
+import DrawingArea from './components/Dashboard/DrawingArea';
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="signup" element={<Signup />} />
         <Route path="email" element={<Emailverify />} />
         <Route path="dashboard" element={<Dashboard />} />
+        <Route path="drawing" element={<DrawingArea />} />
        
       
     </Routes>

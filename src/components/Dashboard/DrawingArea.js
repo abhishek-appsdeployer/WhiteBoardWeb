@@ -57,10 +57,13 @@ const DrawingArea = () => {
 
   const handleTextDragMove = (e, i) => {
     const updatedTexts = [...texts];
-    updatedTexts[i].x += e.target.deltaX();
-    updatedTexts[i].y += e.target.deltaY();
+    const newX = e.target.x() + e.target.getStage().getPointerPosition().x;
+    const newY = e.target.y() + e.target.getStage().getPointerPosition().y;
+    updatedTexts[i].x = newX;
+    updatedTexts[i].y = newY;
     setTexts([...updatedTexts]);
   };
+  
 
   const handleUndo = () => {
     if (selectedTool === 'line') {
@@ -77,7 +80,7 @@ const DrawingArea = () => {
     setCircles([]);
     setTexts([]);
   };
-
+ 
   return (
     <div className="text-center text-dark border m-5 border-danger">
       <Stage
@@ -120,6 +123,7 @@ y={text.y}
 text={text.text}
 fontSize={text.fontSize}
 draggable={true}
+onDragMove={(e) => handleTextDragMove(e, i)}
 globalCompositeOperation={'source-over'}
 />
 ))}

@@ -5,3 +5,11 @@
     background-color: aqua;
   
 }
+.plus{
+    width: 70px;
+    height: 70px;
+}
+.nb{
+    border: 2px solid seagreen;
+    padding: 10px;
+}
