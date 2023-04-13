@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useState } from "react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSquare } from '@fortawesome/free-solid-svg-icons';
+import { faPlay } from '@fortawesome/free-solid-svg-icons';
 const Whiteboard = () => {
   const canvasRef = useRef(null);
   const ctxRef = useRef(null);
@@ -136,18 +138,20 @@ const Whiteboard = () => {
   
 
   return (
-    <div className="bg-danger">
+    <div className="" style={{backgroundColor:"white",border:"2px solid red",margin:"10px"}}>
       <canvas
         ref={canvasRef}
         onMouseDown={startDrawing}
         onMouseMove={draw}
         onMouseUp={endDrawing}
       />
-      <div>
-        <button onClick={() => setDrawingMode("pencil")}>Pencil</button>
-        <button onClick={() => setDrawingMode("circle")}>Circle</button>
-        <button onClick={() => setDrawingMode("triangle")}>Triangle</button>
-        <button onClick={() => setDrawingMode("rectangle")}>Rectangle</button>
+      <div className="d-flex gap-5 ">
+      <div className="bg-dark d-flex gap-5 m-2 ">
+        <div onClick={() => setDrawingMode("pencil")}> <i className="fas fa-pencil text-light p-3 " style={{ fontSize: '35px' }}></i></div>
+        <div onClick={() => setDrawingMode("circle")}> <i className="fas fa-circle text-light p-3 " style={{ fontSize: '35px' }}></i></div>
+        <div onClick={() => setDrawingMode("triangle")}> <FontAwesomeIcon style={{ fontSize: '35px' }} className="text-light p-3" icon={faPlay} size={60}/></div>
+        <div onClick={() => setDrawingMode("rectangle")}> <FontAwesomeIcon style={{ fontSize: '35px' }} className="text-light p-3 " icon={faSquare} /></div>
+        </div>
         <button onClick={clearCanvas}>Clear</button>
         <button onClick={()=>undoDrawing()}>Undo</button>
       </div>
