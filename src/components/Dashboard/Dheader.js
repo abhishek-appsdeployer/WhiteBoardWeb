@@ -36,7 +36,7 @@ const Dheader = () => {
           </Dropdown.Toggle>
 
           <Dropdown.Menu show={isOpen} className="p-10">
-            <Dropdown.Item href="#/action-1">{name}</Dropdown.Item>
+            <Dropdown.Item href="#/action-11">{name}</Dropdown.Item>
             <Dropdown.Item href="#/action-2">{email}</Dropdown.Item>
             <Dropdown.Item href="/">
             logout
