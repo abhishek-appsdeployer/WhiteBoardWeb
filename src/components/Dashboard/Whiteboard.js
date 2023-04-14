@@ -145,6 +145,7 @@ const Whiteboard = () => {
         onMouseMove={draw}
         onMouseUp={endDrawing}
       />
+      {/* icons */}
       <div className="d-flex gap-5 ">
       <div className="bg-dark d-flex gap-5 m-2 ">
         <div onClick={() => setDrawingMode("pencil")}> <i className="fas fa-pencil text-light p-3 " style={{ fontSize: '35px' }}></i></div>

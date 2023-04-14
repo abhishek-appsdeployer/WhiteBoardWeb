@@ -6,11 +6,19 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import DrawingArea from './DrawingArea';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { incrementBoardCount,addBoard, deleteBoard } from '../../Redux/Action/Action';
 
 const Dashboard = () => {
-  const [boardCount, setBoardCount] = useState(1);
+  const [boardCount, setBoardCount] = useState(0);
   const [show, setShow] = useState(false);
   const [boardName, setBoardName] = useState(""); // State for board name
+  const [board, setBoard] = useState([]); // State for storing board names
+  const boards = useSelector(state => state.boards); // Get boards from Redux store
+  const dispatch = useDispatch(); // Dispatch actions to Redux store
+
+  
+
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -18,6 +26,13 @@ const Dashboard = () => {
   const handleNewBoardClick = () => {
     // Function to handle the "New Board" button click
     setBoardCount(prevCount => prevCount + 1); // Increase the board count by 1
+    dispatch(incrementBoardCount());
+  }
+  const deletebaord=(name)=>{
+    const res=board.filter((item)=>item!==name)
+    setBoardCount(prevCount => prevCount -1)
+    setBoard(res)
+
   }
 
   const handleSaveChanges = () => {
@@ -25,7 +40,9 @@ const Dashboard = () => {
     if (boardName) {
       // Check if board name is not empty
       setBoardCount(prevCount => prevCount + 1); // Increase the board count by 1
-      handleClose(); // Close the modal
+      setBoard(prevBoard => [boardName, ...prevBoard]); ; // Update the board name state with the new board name
+      handleClose();
+      setBoardName("") // Close the modal
     }
   }
 
@@ -35,15 +52,18 @@ const Dashboard = () => {
   }
 
   const boardComponents = Array.from({ length: boardCount }).map((_, index) => (
-    <Link to="/drawing" key={index}>
-      <div>
+    <div to="/drawing" key={index}>
+      <div className='d-flex del'>
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
-        <p>{boardName} Boards name {index + 1}</p> {/* Fix the board name display */}
+      <Link to="/drawing" > <p>{board[index]} </p></Link> {/* Fix the board name display */}
+
+        <button onClick={() => deletebaord(board[index])}>Delete the board</button>
+
       </div>
-    </Link>
+    </div>
   ));
-  
+
 
   return (
     <div>
@@ -65,9 +85,7 @@ const Dashboard = () => {
             <input type="text" className="form-control" value={boardName} onChange={handleBoardNameChange} />
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
-              Close
-            </Button>
+
             <Button variant="primary" onClick={handleSaveChanges}>
               Save Changes
             </Button>

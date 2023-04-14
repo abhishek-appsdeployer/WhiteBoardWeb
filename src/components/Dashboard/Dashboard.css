@@ -13,3 +13,9 @@
     border: 2px solid seagreen;
     padding: 10px;
 }
+.del{
+    justify-content: space-between;
+    margin: 10px;
+    border: 2px solid blue;
+    padding: 10px;
+}
