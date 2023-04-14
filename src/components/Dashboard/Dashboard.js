@@ -10,37 +10,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { incrementBoardCount,addBoard, deleteBoard } from '../../Redux/Action/Action';
 
 const Dashboard = () => {
-  const [boardCount, setBoardCount] = useState(0);
   const [show, setShow] = useState(false);
   const [boardName, setBoardName] = useState(""); // State for board name
-  const [board, setBoard] = useState([]); // State for storing board names
   const boards = useSelector(state => state.boards); // Get boards from Redux store
+  const boardCount = useSelector(state => state.boardCount); // Get board count from Redux store
   const dispatch = useDispatch(); // Dispatch actions to Redux store
-
-  
-
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const handleNewBoardClick = () => {
-    // Function to handle the "New Board" button click
-    setBoardCount(prevCount => prevCount + 1); // Increase the board count by 1
-    dispatch(incrementBoardCount());
-  }
-  const deletebaord=(name)=>{
-    const res=board.filter((item)=>item!==name)
-    setBoardCount(prevCount => prevCount -1)
-    setBoard(res)
+  
 
+  const deleteBoardItem = (name) => {
+    // Function to handle board deletion
+    dispatch(deleteBoard(name)); // Dispatch deleteBoard action to Redux store
   }
 
   const handleSaveChanges = () => {
     // Function to handle the "Save Changes" button click in the modal
     if (boardName) {
       // Check if board name is not empty
-      setBoardCount(prevCount => prevCount + 1); // Increase the board count by 1
-      setBoard(prevBoard => [boardName, ...prevBoard]); ; // Update the board name state with the new board name
+      dispatch(incrementBoardCount()); // Dispatch incrementBoardCount action to Redux store
+      dispatch(addBoard(boardName)); // Dispatch addBoard action to Redux store
       handleClose();
       setBoardName("") // Close the modal
     }
@@ -51,19 +42,16 @@ const Dashboard = () => {
     setBoardName(e.target.value); // Update the board name state
   }
 
-  const boardComponents = Array.from({ length: boardCount }).map((_, index) => (
-    <div to="/drawing" key={index}>
+  const boardComponents = boards.map((board, index) => (
+    <div key={index}>
       <div className='d-flex del'>
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
-      <Link to="/drawing" > <p>{board[index]} </p></Link> {/* Fix the board name display */}
-
-        <button onClick={() => deletebaord(board[index])}>Delete the board</button>
-
+        <Link to="/drawing">{board}</Link> {/* Fix the board name display */}
+        <button onClick={() => deleteBoardItem(board)}>Delete the board</button>
       </div>
     </div>
   ));
-
 
   return (
     <div>
