@@ -6,16 +6,22 @@ import { faPlay} from '@fortawesome/free-solid-svg-icons';
 import { BiText } from 'react-icons/bi';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-
+import ColorPicker from './ColorPicker';
+import { SliderPicker, HuePicker } from 'react-color';
 const DrawingArea = () => {
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
   const [texts, setTexts] = useState([]);
   const [rectangles, setRectangles] = useState([]);
+  const [draw,setDraw]=useState([])
   const [inputtext,setInutText]=useState()
 
   const [selectedTool, setSelectedTool] = useState('');
+  const [selectedColor, setSelectedColor] = useState('#0055ff');
   const isDrawing = useRef(false);
+ 
+  const lineRef = useRef(); // Ref to keep track of current line
+  const brushRef = useRef(); 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -23,13 +29,33 @@ const DrawingArea = () => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
     if (selectedTool === 'line') {
-      setLines([...lines, { points: [pos.x, pos.y] }]);
+        const newLine = {
+            points: [pos.x, pos.y],
+            line: true,
+            ref: React.createRef()
+          };
+          setLines([...lines, newLine]);
+          lineRef.current = newLine.ref; // Update line ref
+      setDraw([...draw, { points: [pos.x, pos.y] }])
     } else if (selectedTool === 'circle') {
       setCircles([...circles, { x: pos.x, y: pos.y, radius: 0 }]);
+      setDraw([...draw, { x: pos.x, y: pos.y, radius: 0 }])
     }
    else if (selectedTool === 'rectangle') {
     setRectangles([...rectangles, { x: pos.x, y: pos.y, width: 0, height: 0 }]);
+    setDraw([...draw, { x: pos.x, y: pos.y, width: 0, height: 0 }])
   }
+  else if (selectedTool === 'brush') {
+    const newBrushLine = {
+        points: [pos.x, pos.y],
+        brush: true,
+        ref: React.createRef()
+      };
+      setLines([...lines, newBrushLine]);
+      brushRef.current = newBrushLine.ref; // Update brush ref
+    }
+   
+  
   };
 
   const handleMouseMove = (e) => {
@@ -39,12 +65,12 @@ const DrawingArea = () => {
     const stage = e.target.getStage();
     const point = stage.getPointerPosition();
     if (selectedTool === 'line') {
-      let lastLine = lines[lines.length - 1];
-      if (lastLine) {
-        lastLine.points = lastLine.points.concat([point.x, point.y]);
-        lines.splice(lines.length - 1, 1, lastLine);
-        setLines([...lines]);
-      }
+        const newLine = {
+            ...lines[lines.length - 1],
+            points: lines[lines.length - 1].points.concat([point.x, point.y])
+          };
+          lines.splice(lines.length - 1, 1, newLine);
+          setLines([...lines]);
     } else if (selectedTool === 'circle') {
       let lastCircle = circles[circles.length - 1];
       if (lastCircle) {
@@ -66,17 +92,21 @@ const DrawingArea = () => {
         setRectangles([...rectangles]);
       }
     }
+    else if (selectedTool === 'brush') {
+        const newBrushLine = {
+            ...lines[lines.length - 1],
+            points: lines[lines.length - 1].points.concat([point.x, point.y])
+          };
+          lines.splice(lines.length - 1, 1, newBrushLine);
+          setLines([...lines]);
+        }
   };
   
   const handleMouseUp = () => {
     isDrawing.current = false;
   };
 
-  const handleTextChange = (e, i) => {
-    const updatedTexts = [...texts];
-    updatedTexts[i].text = e.target.value;
-    setTexts([...updatedTexts]);
-  };
+ 
 
   const handleTextDragMove = (e, i) => {
     const updatedTexts = [...texts];
@@ -91,7 +121,10 @@ const DrawingArea = () => {
 
   const handleUndo = () => {
     if (selectedTool === 'line') {
-      setLines(lines.slice(0, lines.length - 1));
+        const lastLine = lines[lines.length - 1];
+        // Add last line to undo stack
+        setLines(lines.slice(0, -1)); 
+    
     } else if (selectedTool === 'circle') {
       setCircles(circles.slice(0, circles.length - 1));
     } else if (selectedTool === 'text') {
@@ -107,6 +140,7 @@ const DrawingArea = () => {
     setCircles([]);
     setTexts([]);
     setRectangles([])
+    
   };
   const handleSaveChanges = () => {
     // Function to handle the "Save Changes" button click in the modal
@@ -119,6 +153,11 @@ const DrawingArea = () => {
     setShow(false)
     }
   }
+  const handleColorChange = (color) => {
+    setSelectedColor(color.hex);
+    // alert(`Selected color: ${color.hex}`);
+    console.log(color.hex)
+  };
   return (
     <>
 <h1 className='text-center p-2 text-success'>WhiteBoard</h1>
@@ -129,7 +168,14 @@ const DrawingArea = () => {
       <div className="bg-dark d-flex gap-0.2 gap-md-3 gap-lg-5' m-2 ">
         <div onClick={() => setSelectedTool('line')} > <i className="fas fa-pencil text-light p-3 " style={{ fontSize: '35px' }}></i></div>
         <div onClick={()=> setSelectedTool('circle')}> <i className="fas fa-circle text-light p-3 " style={{ fontSize: '35px' }}></i></div>
-        
+        <Button
+          variant="light"
+          onClick={() => setSelectedTool('brush')}
+          className={selectedTool === 'brush' ? 'active' : ''}
+        >
+          {/* <FontAwesomeIcon icon={faPaintBrush} /> */}
+          brush
+        </Button>
         <div  onClick={() => setSelectedTool('rectangle')} > <FontAwesomeIcon style={{ fontSize: '35px' }} className="text-light p-3 " icon={faSquare} /></div>
         
 {/* <div onClick={() => setSelectedTool('text')}className='mt-3'> */}
@@ -141,9 +187,14 @@ const DrawingArea = () => {
         <div onClick={handleUndo} > <i className="fas fa-undo text-light p-3 " style={{ fontSize: '35px' }}></i></div>
         <div onClick={handleClear} > <i className="fas fa-trash text-light p-3 " style={{ fontSize: '35px' }}></i></div>
         </div>
+       
+       
 
       
         </div>
+        {/* color picker component */}
+        {/* <ColorPicker/> */}
+        <HuePicker color={selectedColor} onChange={handleColorChange} className='m-3' />
 
       </div>
     
@@ -158,15 +209,12 @@ const DrawingArea = () => {
         <Layer>
           {lines.map((line, i) => (
             <Line
-              key={i}
-              points={line.points}
-              stroke="#df4b26"
-              strokeWidth={2}
-              tension={0.5}
-              lineCap="round"
-              draggable={true}
-              globalCompositeOperation={'source-over'}
-            />
+            key={i}
+            points={line.points}
+            stroke={line.line ? 'black' : 'red'}
+            strokeWidth={line.line ? 2 : 10}
+            ref={line.line ? line.ref : brushRef.current}
+          />
           ))}
           {circles.map((circle, i) => (
             <Circle
@@ -174,7 +222,7 @@ const DrawingArea = () => {
               x={circle.x}
               y={circle.y}
 radius={circle.radius}
-stroke="#00f"
+stroke={selectedColor}
 strokeWidth={2}
 draggable={true}
 globalCompositeOperation={'source-over'}
@@ -187,7 +235,7 @@ globalCompositeOperation={'source-over'}
         y={rectangle.y}
         width={rectangle.width}
         height={rectangle.height}
-        stroke="#df4b26"
+        stroke={selectedColor}
         strokeWidth={2}
         draggable={selectedTool === 'rectangle'}
       />
