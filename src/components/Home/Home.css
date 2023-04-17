@@ -1,9 +1,24 @@
 .main{
     background-color: gray;
-    height: 100vh;
+   
+    
 }
 .wh{
-    justify-content: center;
-    align-items: center !important;
+    
+    text-align: center;
+    align-items: center;
+    height: 90vh;
     color: white;
+    display: flex;
+  
+        justify-content: center;
+        align-items: center;
+      
+        margin: 0;
+}
+.ho:hover{
+color:white;
+background-color: black;
+width: 100px !important;
+
 }

@@ -47,8 +47,8 @@ const Dashboard = () => {
       <div className='d-flex del'>
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
-        <Link to="/drawing">{board}</Link> {/* Fix the board name display */}
-        <button onClick={() => deleteBoardItem(board)}>Delete the board</button>
+        <Link to="/drawing" style={{textDecoration:"none"}}><h1 className='text-dark'>{board}</h1></Link> {/* Fix the board name display */}
+        <div onClick={() => deleteBoardItem(board)} > <i className="fas fa-trash text-danger p-3 " style={{ fontSize: '35px' }}></i></div>
       </div>
     </div>
   ));
@@ -74,8 +74,8 @@ const Dashboard = () => {
           </Modal.Body>
           <Modal.Footer>
 
-            <Button variant="primary" onClick={handleSaveChanges}>
-              Save Changes
+            <Button className='w-auto' variant="primary" onClick={handleSaveChanges}>
+              Save 
             </Button>
           </Modal.Footer>
         </Modal>

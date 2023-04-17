@@ -4,17 +4,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare,faText } from '@fortawesome/free-solid-svg-icons';
 import { faPlay} from '@fortawesome/free-solid-svg-icons';
 import { BiText } from 'react-icons/bi';
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
 
 const DrawingArea = () => {
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
   const [texts, setTexts] = useState([]);
   const [rectangles, setRectangles] = useState([]);
- 
+  const [inputtext,setInutText]=useState()
 
   const [selectedTool, setSelectedTool] = useState('');
   const isDrawing = useRef(false);
-
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const handleMouseDown = (e) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
@@ -76,12 +80,13 @@ const DrawingArea = () => {
 
   const handleTextDragMove = (e, i) => {
     const updatedTexts = [...texts];
-    const newX = e.target.x() + e.target.getStage().getPointerPosition().x;
-    const newY = e.target.y() + e.target.getStage().getPointerPosition().y;
+    const newX = e.target.x();
+    const newY = e.target.y();
     updatedTexts[i].x = newX;
     updatedTexts[i].y = newY;
     setTexts([...updatedTexts]);
   };
+  
   
 
   const handleUndo = () => {
@@ -103,21 +108,32 @@ const DrawingArea = () => {
     setTexts([]);
     setRectangles([])
   };
- 
+  const handleSaveChanges = () => {
+    // Function to handle the "Save Changes" button click in the modal
+    if (inputtext) {
+      alert(inputtext)
+      /// Close the modal
+      setSelectedTool('text')
+      setTexts([...texts, { x: 100, y: 100, text: inputtext, fontSize: 16 }])
+      setInutText()
+    setShow(false)
+    }
+  }
   return (
     <>
 <h1 className='text-center p-2 text-success'>WhiteBoard</h1>
    
     <div className="text-center text-dark border m-1 border-danger">
     <div>
-    <div className="d-flex gap-5 ">
-      <div className="bg-dark d-flex gap-5 m-2 ">
+    <div className="d-flex gap-1  ">
+      <div className="bg-dark d-flex gap-0.2 gap-md-3 gap-lg-5' m-2 ">
         <div onClick={() => setSelectedTool('line')} > <i className="fas fa-pencil text-light p-3 " style={{ fontSize: '35px' }}></i></div>
         <div onClick={()=> setSelectedTool('circle')}> <i className="fas fa-circle text-light p-3 " style={{ fontSize: '35px' }}></i></div>
         
         <div  onClick={() => setSelectedTool('rectangle')} > <FontAwesomeIcon style={{ fontSize: '35px' }} className="text-light p-3 " icon={faSquare} /></div>
         
-<div onClick={() => setSelectedTool('text')}className='mt-3'>
+{/* <div onClick={() => setSelectedTool('text')}className='mt-3'> */}
+<div onClick={() => handleShow()}className='mt-3'>
   <BiText color='white' size={40} />
 </div>
 
@@ -128,16 +144,7 @@ const DrawingArea = () => {
 
       
         </div>
-        {selectedTool === 'text' && (
-<div className="mt-3">
-<input
-type="text"
-className="form-control"
-placeholder="Enter text"
-onChange={(e) => setTexts([...texts, { x: 100, y: 100, text: e.target.value, fontSize: 16 }])}
-/>
-</div>
-)}
+
       </div>
     
       <Stage
@@ -202,6 +209,21 @@ globalCompositeOperation={'source-over'}
 
 
 </div>
+  {/* Modal code */}
+  <Modal show={show} onHide={handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>Enter the text:</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <input type="text" className="form-control" value={inputtext} onChange={(e)=>setInutText(e.target.value)} />
+          </Modal.Body>
+          <Modal.Footer>
+
+            <Button className='w-auto' variant="primary" onClick={handleSaveChanges}>
+              Save 
+            </Button>
+          </Modal.Footer>
+        </Modal>
  </>
 );
 };

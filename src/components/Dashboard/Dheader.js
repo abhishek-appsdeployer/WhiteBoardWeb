@@ -26,7 +26,7 @@ const Dheader = () => {
 
         <Dropdown drop="start">
           <Dropdown.Toggle
-            className="rounded-circle w-auto"
+            className="rounded-circle  -mt-1 toggle"
             style={{ backgroundColor: '#28a745' }}
           >
             {/* <div className="bg-sucess name" onClick={() => setIsOpen(!isOpen)}> */}

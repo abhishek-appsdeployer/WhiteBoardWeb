@@ -11,13 +11,13 @@ const Home = () => {
         <Link to="/login"> <button>Login</button></Link>
         <Link to="/signup">   <button>Signup</button></Link> */}
         <div  className="main">
-        <div className="d-flex gap-5 justify-content-end mx-5 pt-5">
-        <Link to="/login">  <p className='border border-dark px-3 py-1 rounded-2'>Sign in</p></Link>
-        <Link to="/signup"> <p className='border border-dark px-3 py-1 rounded-2'>Signup</p></Link>
+        <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-5 justify-content-end mx-5 pt-5">
+        <Link to="/login" style={{textDecoration:"none",color:"black",fontSize:"20px",fontWeight:"bold",width:"fit-content"}}>  <p className='border border-dark px-3 py-1 rounded-2 ho'>Sign in</p></Link>
+        <Link to="/signup" style={{textDecoration:"none",color:"black",fontSize:"20px",fontWeight:"bold",width:"fit-content"}}> <p className='border border-dark px-3 py-1 rounded-2 ho'>Signup</p></Link>
 </div>
 
-<div className="d-flex wh">
-  <h1>WhiteBoard</h1>
+<div className=" ">
+  <h1 className="wh">WhiteBoard</h1>
 </div>
         </div>
     </>
