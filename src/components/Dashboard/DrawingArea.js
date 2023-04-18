@@ -168,14 +168,14 @@ const DrawingArea = () => {
       <div className="bg-dark d-flex gap-0.2 gap-md-3 gap-lg-5' m-2 ">
         <div onClick={() => setSelectedTool('line')} > <i className="fas fa-pencil text-light p-3 " style={{ fontSize: '35px' }}></i></div>
         <div onClick={()=> setSelectedTool('circle')}> <i className="fas fa-circle text-light p-3 " style={{ fontSize: '35px' }}></i></div>
-        <Button
+        <div
           variant="light"
           onClick={() => setSelectedTool('brush')}
           className={selectedTool === 'brush' ? 'active' : ''}
         >
           {/* <FontAwesomeIcon icon={faPaintBrush} /> */}
-          brush
-        </Button>
+          <i className="fas fa-brush text-light p-3 " style={{ fontSize: '35px' }}></i>
+        </div>
         <div  onClick={() => setSelectedTool('rectangle')} > <FontAwesomeIcon style={{ fontSize: '35px' }} className="text-light p-3 " icon={faSquare} /></div>
         
 {/* <div onClick={() => setSelectedTool('text')}className='mt-3'> */}
@@ -211,7 +211,7 @@ const DrawingArea = () => {
             <Line
             key={i}
             points={line.points}
-            stroke={line.line ? 'black' : 'red'}
+            stroke={selectedColor}
             strokeWidth={line.line ? 2 : 10}
             ref={line.line ? line.ref : brushRef.current}
           />
