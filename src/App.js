@@ -2,14 +2,14 @@ import React from 'react'
 import Home from './components/Home/Home'
 import Login from './components/Login/Login'
 import Signup from './components/Signup/Signup'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route,HashRouter } from "react-router-dom";
 import Emailverify from './components/Signup/Emailverify';
 import Dashboard from './components/Dashboard/Dashboard';
 import DrawingArea from './components/Dashboard/DrawingArea';
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <HashRouter>
     <Routes>
     
     <Route path='/' element={<Home/>}/>
@@ -21,7 +21,7 @@ const App = () => {
        
       
     </Routes>
-  </BrowserRouter>
+  </HashRouter>
   )
 }
 
