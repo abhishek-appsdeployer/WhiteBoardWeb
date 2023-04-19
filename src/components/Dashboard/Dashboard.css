@@ -30,7 +30,10 @@
 }
 .bgwhite{
     background-color: #FFFFFF;
-    padding: 10px 20px;
+    padding: 10px;
+    height: 40px;
+    width: fit-content;
+    border-radius: 10px;
 }
 .present{
     background-color: gray;
@@ -38,4 +41,10 @@
     height: fit-content;
     padding: 10px;
     
+}
+.circ{
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    background-color: gray;
 }

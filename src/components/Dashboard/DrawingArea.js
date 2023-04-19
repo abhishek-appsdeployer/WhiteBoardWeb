@@ -4,8 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare,faText } from '@fortawesome/free-solid-svg-icons';
 import { faPlay} from '@fortawesome/free-solid-svg-icons';
 import { BiText ,BiRectangle, BiBrush} from 'react-icons/bi';
-import { BsPencil } from 'react-icons/bs';
-import { VscCircle } from 'react-icons/vsc';
+import { BsPencil,BsCameraVideo ,BsThreeDots,BsEmojiSunglasses,BsBell} from 'react-icons/bs';
+import { VscCircle,VscCommentDiscussion } from 'react-icons/vsc';
+import { GiAlarmClock} from 'react-icons/gi';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import ColorPicker from './ColorPicker';
@@ -172,25 +173,31 @@ const DrawingArea = () => {
    
     <div className=" p-1 border-danger bg-gray drawmain">
     {/* new header */}
-    <div className="d-flex flex-column flex-lg-row justify-content-between m-2">
-    <div className="bgwhite d-flex gap-2">
+    <div className="d-flex flex-column gap-2 flex-lg-row justify-content-between m-2">
+    <p className="d-flex gap-2 bgwhite p-2">
+    
       <p style={{fontSize:"20px",fontWeight:"bold"}}>Whiteboard</p>
       <p>|</p>
       <p>User Board</p>
-    </div>
+    </p>
     
-    <div className="bgwhite d-flex gap-2">
-    <i className="fas fa-clock text-dark p-3 " style={{ fontSize: '15px' }}></i>
-    <i className="fas fa-message text-dark p-3 " style={{ fontSize: '15px' }}></i>
-    <i className="fas fa-video text-dark p-3 " style={{ fontSize: '15px' }}></i>
-    <i className="fas fa-3dot text-dark p-3 " style={{ fontSize: '15px' }}></i>
-    <i className="fas fa-line text-dark p-3 " style={{ fontSize: '15px' }}></i>
-    <i className="fas fa-laugh text-dark p-3 " style={{ fontSize: '15px' }}></i>
-    <i className="fas fa-bell text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <div className="bgwhite d-flex gap-3">
+    <GiAlarmClock size={23}/>
+   
+    <VscCommentDiscussion size={23}/>
+    
+    <BsCameraVideo size={23}/>
+    <BsThreeDots size={23}/>
+    <BsEmojiSunglasses size={23}/>
+    <BsBell size={23}/>
+   
     
     </div>
 
     <div className=" d-flex gap-3 round-2">
+    <p className='circ'>
+
+    </p>
     <p className='present text-light h6'>
       Present
     </p>
