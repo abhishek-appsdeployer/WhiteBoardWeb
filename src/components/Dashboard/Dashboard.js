@@ -62,8 +62,11 @@ const Dashboard = () => {
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
         <Link to="/drawing" style={{ textDecoration: "none" }}><h1 className='text-dark'>{board}</h1></Link>
+        <div className='d-flex'>
+        <div onClick={() => handleEditBoardName(index)}><i className="fas fa-edit text-danger p-3 " style={{ fontSize: '35px' }}/></div>
+
         <div onClick={() => deleteBoardItem(board)} > <i className="fas fa-trash text-danger p-3 " style={{ fontSize: '35px' }}></i></div>
-        <div onClick={() => handleEditBoardName(index)}>Edit board name</div>
+        </div>
       </div>
     </div>
   ));
@@ -74,9 +77,9 @@ const Dashboard = () => {
 
       {/* Recent board */}
       <h2 className='m-5'>Recent Board</h2>
-      <div className='m-5'>
-        <div className="d-flex gap-4 border-2 nb" onClick={handleShow}>
-          <p className='bg-success plus h-5 rounded-3'> <i className="fas fa-plus text-light p-3 " style={{ fontSize: '35px' }}></i></p>
+      <div className=' container'>
+        <div className="d-flex gap-4 border-2 nb " onClick={handleShow}>
+          <p className='bg-success plus h-5 rounded-3'> <i className="fas fa-plus text-light p-3 " style={{ fontSize: '30px' }}></i></p>
           <h1>New Board</h1>
         </div>
         {/* Modal code */}
@@ -96,8 +99,8 @@ const Dashboard = () => {
 </Modal.Footer>
 </Modal>
 </div> {/* Render the list of boards */}
-  <div className="container mt-5">
-    <div className="row justify-content-center">
+  <div className="container ">
+    <div className="">
       {boardComponents}
     </div>
   </div>

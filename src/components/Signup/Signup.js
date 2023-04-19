@@ -6,7 +6,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [otp, setOtp] = useState('');
   const [emailErr, setEmailErr] = useState('');
   const [passwordErr, setPasswordErr] = useState('');
   const [userNameErr, setUserNameErr] = useState('');
@@ -39,11 +39,13 @@ const Signup = () => {
         const response = await axios.post('https://task.appdeployers.com/api/deployer/register', {
           email: email,
           password: password,
-          username:userName
+          username:userName,
+          otp:otp
         });
         console.log(response)
         // Handle successful signup
         // Navigate to the login screen
+        alert("Signup successfully")
         navigate('/login');
       } catch (error) {
         // Handle error
@@ -55,6 +57,7 @@ const Signup = () => {
   return (
     <div className="">
       {/* header for login */}
+      
       <div className="d-flex flex-sm-row flex-column justify-content-between p-5">
         <h1>WhiteBoard</h1>
         <div className="d-flex gap-3">
@@ -90,6 +93,10 @@ const Signup = () => {
           </label>
           <br />
           {userNameErr ? <p className='text-danger'>{userNameErr}</p> : null}
+          <label htmlFor="" className='my-2'>
+            <input type="text" placeholder="Otp" value={otp} onChange={(e) => setOtp(e.target.value)} />
+          </label>
+          <br />
           <button type="submit" className="">Sign up</button>
         </form>
 

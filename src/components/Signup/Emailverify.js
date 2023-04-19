@@ -31,7 +31,7 @@ try {
     const data = response.data;
     if (data.success) {
       // If API response is successful, navigate to signup page
-      alert("Verification done")
+      alert("Verification Code is sent to your email")
       navigate('/signup');
     } else {
       // If API response is not successful, show error message

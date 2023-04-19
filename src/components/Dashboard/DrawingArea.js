@@ -3,7 +3,9 @@ import { Stage, Layer, Line, Circle, Text ,Rect} from 'react-konva';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare,faText } from '@fortawesome/free-solid-svg-icons';
 import { faPlay} from '@fortawesome/free-solid-svg-icons';
-import { BiText } from 'react-icons/bi';
+import { BiText ,BiRectangle, BiBrush} from 'react-icons/bi';
+import { BsPencil } from 'react-icons/bs';
+import { VscCircle } from 'react-icons/vsc';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import ColorPicker from './ColorPicker';
@@ -158,49 +160,84 @@ const DrawingArea = () => {
     // alert(`Selected color: ${color.hex}`);
     console.log(color.hex)
   };
+  const handleCircleDragMove = (e, i) => {
+    const updatedCircles = [...circles];
+    const newRadius = Math.abs(e.target.x() - circles[i].x) + Math.abs(e.target.y() - circles[i].y);
+    updatedCircles[i].radius = newRadius;
+    setCircles([...updatedCircles]);
+  };
   return (
     <>
-<h1 className='text-center p-2 text-success'>WhiteBoard</h1>
+
    
-    <div className="text-center text-dark border m-1 border-danger">
+    <div className=" p-1 border-danger bg-gray drawmain">
+    {/* new header */}
+    <div className="d-flex flex-column flex-lg-row justify-content-between m-2">
+    <div className="bgwhite d-flex gap-2">
+      <p style={{fontSize:"20px",fontWeight:"bold"}}>Whiteboard</p>
+      <p>|</p>
+      <p>User Board</p>
+    </div>
+    
+    <div className="bgwhite d-flex gap-2">
+    <i className="fas fa-clock text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <i className="fas fa-message text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <i className="fas fa-video text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <i className="fas fa-3dot text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <i className="fas fa-line text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <i className="fas fa-laugh text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    <i className="fas fa-bell text-dark p-3 " style={{ fontSize: '15px' }}></i>
+    
+    </div>
+
+    <div className=" d-flex gap-3 round-2">
+    <p className='present text-light h6'>
+      Present
+    </p>
+    <p className='present text-light h6'>
+      Share
+    </p>
+    
+    </div>
+    </div>
     <div>
-    <div className="d-flex gap-1  ">
-      <div className="bg-dark d-flex gap-0.2 gap-md-3 gap-lg-5' m-2 ">
-        <div onClick={() => setSelectedTool('line')} > <i className="fas fa-pencil text-light p-3 " style={{ fontSize: '35px' }}></i></div>
-        <div onClick={()=> setSelectedTool('circle')}> <i className="fas fa-circle text-light p-3 " style={{ fontSize: '35px' }}></i></div>
+    {/* options */}
+   <HuePicker color={selectedColor} onChange={handleColorChange} className='m-3' />
+
+      </div>
+    <div className="d-flex">
+    {/* options */}
+    <div className="d-flex flex-column gap-1  ">
+      <div className=" d-flex flex-column gap-0.2 gap-md-1 gap-lg-1' m-2 " style={{backgroundColor:"white"}}>
+        <div onClick={() => setSelectedTool('line')}  className='p-2'><BsPencil size={20}/></div>
+        <div onClick={()=> setSelectedTool('circle')} className='p-2'><VscCircle size={20}/></div>
         <div
           variant="light"
           onClick={() => setSelectedTool('brush')}
-          className={selectedTool === 'brush' ? 'active' : ''}
+          className="p-2"
         >
-          {/* <FontAwesomeIcon icon={faPaintBrush} /> */}
-          <i className="fas fa-brush text-light p-3 " style={{ fontSize: '35px' }}></i>
+          
+          <BiBrush size={20} />
         </div>
-        <div  onClick={() => setSelectedTool('rectangle')} > <FontAwesomeIcon style={{ fontSize: '35px' }} className="text-light p-3 " icon={faSquare} /></div>
+        <div  onClick={() => setSelectedTool('rectangle')} className='p-2'> <BiRectangle size={20}/></div>
         
-{/* <div onClick={() => setSelectedTool('text')}className='mt-3'> */}
-<div onClick={() => handleShow()}className='mt-3'>
-  <BiText color='white' size={40} />
+
+<div onClick={() => handleShow()}className='p-2'>
+  <BiText color='black' size={20} />
 </div>
 
 
-        <div onClick={handleUndo} > <i className="fas fa-undo text-light p-3 " style={{ fontSize: '35px' }}></i></div>
-        <div onClick={handleClear} > <i className="fas fa-trash text-light p-3 " style={{ fontSize: '35px' }}></i></div>
+        <div onClick={handleUndo} > <i className="fas fa-undo text-dark p-2 " style={{ fontSize: '20px' }}></i></div>
+        <div onClick={handleClear} > <i className="fas fa-trash text-dark t p-2 " style={{ fontSize: '20px' }}></i></div>
         </div>
        
        
 
       
         </div>
-        {/* color picker component */}
-        {/* <ColorPicker/> */}
-        <HuePicker color={selectedColor} onChange={handleColorChange} className='m-3' />
-
-      </div>
-    
       <Stage
-        width={window.innerWidth * 0.9}
-        height={600}
+        width={window.innerWidth}
+        height={window.innerHeight*0.8}
         onMouseDown={handleMouseDown}
         onMousemove={handleMouseMove}
         onMouseup={handleMouseUp}
@@ -225,6 +262,7 @@ radius={circle.radius}
 stroke={selectedColor}
 strokeWidth={2}
 draggable={true}
+onDragMove={(e) => handleCircleDragMove(e, i)}
 globalCompositeOperation={'source-over'}
 />
 ))}
@@ -254,6 +292,7 @@ globalCompositeOperation={'source-over'}
 ))}
 </Layer>
 </Stage>
+</div>
 
 
 </div>

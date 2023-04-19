@@ -16,10 +16,26 @@
 .nb{
     border: 2px solid seagreen;
     padding: 10px;
+    border-radius: 20px;
 }
 .del{
     justify-content: space-between;
     margin-top: 10px;
     border: 2px solid green;
     padding: 10px;
+    border-radius: 10px;
+}
+.drawmain{
+    background-color: #F5F5F5;
+}
+.bgwhite{
+    background-color: #FFFFFF;
+    padding: 10px 20px;
+}
+.present{
+    background-color: gray;
+    border-radius: 5px;
+    height: fit-content;
+    padding: 10px;
+    
 }
