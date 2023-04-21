@@ -27,6 +27,7 @@
 }
 .drawmain{
     background-color: #F5F5F5;
+    overflow: hidden;
 }
 .bgwhite{
     background-color: #FFFFFF;
@@ -47,4 +48,8 @@
     height: 40px;
     border-radius: 20px;
     background-color: gray;
+}
+.btnoverlay{
+    width: 40px;
+    background-color: white;
 }

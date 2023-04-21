@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef,useEffect } from 'react';
 import { Stage, Layer, Line, Circle, Text ,Rect} from 'react-konva';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare,faText } from '@fortawesome/free-solid-svg-icons';
@@ -7,23 +7,31 @@ import { BiText ,BiRectangle, BiBrush} from 'react-icons/bi';
 import { BsPencil,BsCameraVideo ,BsThreeDots,BsEmojiSunglasses,BsBell} from 'react-icons/bs';
 import { VscCircle,VscCommentDiscussion } from 'react-icons/vsc';
 import { GiAlarmClock} from 'react-icons/gi';
-import Button from 'react-bootstrap/Button';
+import {Button,Popover , PopoverHeader, PopoverBody} from 'react-bootstrap';
+
 import Modal from 'react-bootstrap/Modal';
 import ColorPicker from './ColorPicker';
 import { SliderPicker, HuePicker } from 'react-color';
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 const DrawingArea = () => {
+  const [showPopover, setShowPopover] = useState(true);
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
   const [texts, setTexts] = useState([]);
   const [rectangles, setRectangles] = useState([]);
   const [draw,setDraw]=useState([])
   const [inputtext,setInutText]=useState()
+ 
 
   const [selectedTool, setSelectedTool] = useState('');
   const [selectedColor, setSelectedColor] = useState('#0055ff');
   const isDrawing = useRef(false);
+
  
-  const lineRef = useRef(); // Ref to keep track of current line
+  const lineRef = useRef(); 
+  const lineRef2 = useRef(); 
+  const lineRef3 = useRef(); // Ref to keep track of current line
   const brushRef = useRef(); 
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
@@ -49,6 +57,7 @@ const DrawingArea = () => {
     setDraw([...draw, { x: pos.x, y: pos.y, width: 0, height: 0 }])
   }
   else if (selectedTool === 'brush') {
+    
     const newBrushLine = {
         points: [pos.x, pos.y],
         brush: true,
@@ -57,6 +66,27 @@ const DrawingArea = () => {
       setLines([...lines, newBrushLine]);
       brushRef.current = newBrushLine.ref; // Update brush ref
     }
+
+    else if (selectedTool === 'line2') {
+     
+      const newLine2 = {
+        points: [pos.x, pos.y],
+        line2: true,
+        ref: React.createRef()
+      };
+      setLines([...lines, newLine2]);
+      lineRef2.current = newLine2.ref; // Update line2 ref
+    }
+    else if (selectedTool === 'line3') {
+      const newLine3 = {
+        points: [pos.x, pos.y],
+        line3: true,
+        ref: React.createRef()
+      };
+      setLines([...lines, newLine3]);
+      lineRef3.current = newLine3.ref; // Update line3 ref
+    }
+    
    
   
   };
@@ -103,6 +133,22 @@ const DrawingArea = () => {
           lines.splice(lines.length - 1, 1, newBrushLine);
           setLines([...lines]);
         }
+        else if (selectedTool === 'line2') {
+          const newLine2 = {
+              ...lines[lines.length - 1],
+              points: lines[lines.length - 1].points.concat([point.x, point.y])
+            };
+            lines.splice(lines.length - 1, 1, newLine2);
+            setLines([...lines]);
+          }
+          else if (selectedTool === 'line3') {
+            const newLine3 = {
+                ...lines[lines.length - 1],
+                points: lines[lines.length - 1].points.concat([point.x, point.y])
+              };
+              lines.splice(lines.length - 1, 1, newLine3);
+              setLines([...lines]);
+            }
   };
   
   const handleMouseUp = () => {
@@ -123,7 +169,7 @@ const DrawingArea = () => {
   
 
   const handleUndo = () => {
-    if (selectedTool === 'line') {
+    if (selectedTool === 'line' ||"line2"||"line3" ||"line4") {
         const lastLine = lines[lines.length - 1];
         // Add last line to undo stack
         setLines(lines.slice(0, -1)); 
@@ -167,11 +213,9 @@ const DrawingArea = () => {
     updatedCircles[i].radius = newRadius;
     setCircles([...updatedCircles]);
   };
-  return (
+return (
     <>
-
-   
-    <div className=" p-1 border-danger bg-gray drawmain">
+<div className=" p-1 border-danger bg-gray drawmain">
     {/* new header */}
     <div className="d-flex flex-column gap-2 flex-lg-row justify-content-between m-2">
     <p className="d-flex gap-2 bgwhite p-2">
@@ -215,8 +259,14 @@ const DrawingArea = () => {
     <div className="d-flex">
     {/* options */}
     <div className="d-flex flex-column gap-1  ">
-      <div className=" d-flex flex-column gap-0.2 gap-md-1 gap-lg-1' m-2 " style={{backgroundColor:"white"}}>
-        <div onClick={() => setSelectedTool('line')}  className='p-2'><BsPencil size={20}/></div>
+      <div className=" d-flex flex-column rounded gap-0.2 gap-md-1 gap-lg-1' m-2 " style={{backgroundColor:"white"}}>
+        <div onClick={() => setSelectedTool('line')}  className='p-2'><BsPencil size={20} color="red"/></div>
+       
+        <div onClick={() => setSelectedTool('line2')}  className='p-2' style={{color:"green",fontWeight:"bold"}}><BsPencil size={20} color="green"/></div>
+
+        <div onClick={() => setSelectedTool('line3')}  className='p-2' style={{color:"blue",fontWeight:"bold"}}><BsPencil size={20} color="blue"/></div>
+
+       
         <div onClick={()=> setSelectedTool('circle')} className='p-2'><VscCircle size={20}/></div>
         <div
           variant="light"
@@ -226,6 +276,7 @@ const DrawingArea = () => {
           
           <BiBrush size={20} />
         </div>
+        
         <div  onClick={() => setSelectedTool('rectangle')} className='p-2'> <BiRectangle size={20}/></div>
         
 
@@ -244,20 +295,31 @@ const DrawingArea = () => {
         </div>
       <Stage
         width={window.innerWidth}
-        height={window.innerHeight*0.8}
+        height={window.innerHeight}
         onMouseDown={handleMouseDown}
         onMousemove={handleMouseMove}
         onMouseup={handleMouseUp}
         className="canvas-stage"
+       
       >
         <Layer>
           {lines.map((line, i) => (
             <Line
             key={i}
             points={line.points}
-            stroke={selectedColor}
-            strokeWidth={line.line ? 2 : 10}
-            ref={line.line ? line.ref : brushRef.current}
+            stroke={
+      line.line ? 'red' :
+      line.line2 ? 'green' :
+      line.line3 ? 'blue' :
+      selectedColor
+    }
+            // strokeWidth={line.line ?5: 80}
+            strokeWidth={line.line ? 2 : line.line2 ? 10 : line.line3 ? 20 : 80}
+       
+
+           
+            // ref={line.line ? line.ref : brushRef.current}
+            ref={line.line ? line.ref : line.line2 ? lineRef2.current : line.line3 ? lineRef3.current : (selectedTool === 'brush' ? brushRef.current : null)}
           />
           ))}
           {circles.map((circle, i) => (
