@@ -69,7 +69,8 @@ const DrawingArea = () => {
     const newBrushLine = {
         points: [pos.x, pos.y],
         brush: true,
-        ref: React.createRef()
+        ref: React.createRef(),
+        color:brushColor
       };
       setLines([...lines, newBrushLine]);
       brushRef.current = newBrushLine.ref; // Update brush ref
