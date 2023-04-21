@@ -26,6 +26,13 @@ const DrawingArea = () => {
 
   const [selectedTool, setSelectedTool] = useState('');
   const [selectedColor, setSelectedColor] = useState('#0055ff');
+  const [brushColor, setBrushColor] = useState('#000000');
+  const [lineColor, setLineColor] = useState('#000000');
+  const [line1Color, setLine1Color] = useState('#000000');
+  const [line2Color, setLine2Color] = useState('#000000');
+  const [rectangleColor, setRectangleColor] = useState('#000000');
+  const [circleColor, setCircleColor] = useState('#000000');
+  
   const isDrawing = useRef(false);
 
  
@@ -43,7 +50,8 @@ const DrawingArea = () => {
         const newLine = {
             points: [pos.x, pos.y],
             line: true,
-            ref: React.createRef()
+            ref: React.createRef(),
+            color: lineColor // set the line color to lineColor1
           };
           setLines([...lines, newLine]);
           lineRef.current = newLine.ref; // Update line ref
@@ -72,7 +80,8 @@ const DrawingArea = () => {
       const newLine2 = {
         points: [pos.x, pos.y],
         line2: true,
-        ref: React.createRef()
+        ref: React.createRef(),
+        color: line1Color // set the line color to lineColor11
       };
       setLines([...lines, newLine2]);
       lineRef2.current = newLine2.ref; // Update line2 ref
@@ -81,7 +90,8 @@ const DrawingArea = () => {
       const newLine3 = {
         points: [pos.x, pos.y],
         line3: true,
-        ref: React.createRef()
+        ref: React.createRef(),
+        color: line2Color // set the line color to lineColor1
       };
       setLines([...lines, newLine3]);
       lineRef3.current = newLine3.ref; // Update line3 ref
@@ -203,10 +213,39 @@ const DrawingArea = () => {
     }
   }
   const handleColorChange = (color) => {
+    // Update the selected color state
     setSelectedColor(color.hex);
-    // alert(`Selected color: ${color.hex}`);
+    console.log(selectedTool)
+    // Update the appropriate tool color state based on selected tool
+    switch (selectedTool) {
+      case 'brush':
+        setBrushColor(selectedColor);
+        break;
+      case 'line':
+        setLineColor(color.hex);
+        break;
+      case 'line2':
+        setLine1Color(color.hex);
+        break;
+      case 'line3':
+        setLine2Color(color.hex);
+        break;
+      case 'rectangle':
+          setRectangleColor(selectedColor);
+          break;
+      case 'circle':
+            setCircleColor(selectedColor);
+            break;
+      default:
+        break;
+    }
     console.log(color.hex)
+    console.log("line1",line1Color)
+    console.log("line2",line2Color)
+    
+    console.log("line",lineColor)
   };
+  
   const handleCircleDragMove = (e, i) => {
     const updatedCircles = [...circles];
     const newRadius = Math.abs(e.target.x() - circles[i].x) + Math.abs(e.target.y() - circles[i].y);
@@ -260,6 +299,8 @@ return (
     {/* options */}
     <div className="d-flex flex-column gap-1  ">
       <div className=" d-flex flex-column rounded gap-0.2 gap-md-1 gap-lg-1' m-2 " style={{backgroundColor:"white"}}>
+    
+
         <div onClick={() => setSelectedTool('line')}  className='p-2'><BsPencil size={20} color="red"/></div>
        
         <div onClick={() => setSelectedTool('line2')}  className='p-2' style={{color:"green",fontWeight:"bold"}}><BsPencil size={20} color="green"/></div>
@@ -307,11 +348,11 @@ return (
             <Line
             key={i}
             points={line.points}
-            stroke={
-      line.line ? 'red' :
-      line.line2 ? 'green' :
-      line.line3 ? 'blue' :
-      selectedColor
+            stroke={ line.color
+      // line.line ? lineColor :
+      // line.line2 ? line1Color :
+      // line.line3 ? line2Color :
+      // brushColor
     }
             // strokeWidth={line.line ?5: 80}
             strokeWidth={line.line ? 2 : line.line2 ? 10 : line.line3 ? 20 : 80}
@@ -328,7 +369,7 @@ return (
               x={circle.x}
               y={circle.y}
 radius={circle.radius}
-stroke={selectedColor}
+stroke={circleColor}
 strokeWidth={2}
 draggable={true}
 onDragMove={(e) => handleCircleDragMove(e, i)}
@@ -342,7 +383,7 @@ globalCompositeOperation={'source-over'}
         y={rectangle.y}
         width={rectangle.width}
         height={rectangle.height}
-        stroke={selectedColor}
+        stroke={rectangleColor}
         strokeWidth={2}
         draggable={selectedTool === 'rectangle'}
       />
