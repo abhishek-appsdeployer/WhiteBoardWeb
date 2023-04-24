@@ -1,9 +1,22 @@
 import React, { useState } from "react";
-import { Rect, Text, Stage, Layer } from "react-konva";
+import { Rect, Text, Stage, Layer, Group } from "react-konva";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 
-const Sticky = ({ x, y, width, height, text, draggable, onDragEnd, onChange }) => {
+const Sticky = ({
+  x,
+  y,
+  width,
+  height,
+  text,
+  draggable,
+  onDragEnd,
+  onChange,
+  onDelete
+}) => {
   return (
-    <>
+    <Group>
       <Rect
         x={x}
         y={y}
@@ -32,10 +45,27 @@ const Sticky = ({ x, y, width, height, text, draggable, onDragEnd, onChange }) =
         onDragEnd={onDragEnd}
         onDblClick={onChange}
       />
-    </>
+      <Group x={x + width - 35} y={y} width={30} height={30}>
+        <Rect width={30} height={30} fill="red" cornerRadius={15}   onClick={onDelete}/>
+        <Text
+          x={10}
+          y={5}
+          text="-"
+          fontFamily="FontAwesome"
+          fontSize={20}
+          fill="white"
+          verticalAlign="middle"
+        align="center"
+        
+        />
+      </Group>
+    </Group>
   );
 };
+
 export default Sticky;
+
+
 const StickyNote = () => {
   const [notes, setNotes] = useState([
     { x: 50, y: 50, width: 200, height: 200, text: "Note 1", draggable: true },

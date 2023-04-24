@@ -277,6 +277,14 @@ const DrawingArea = () => {
     updatedNotes[index].text = newText;
     setNotes(updatedNotes);
   };
+  const handleNoteDelete = (index) => {
+    const updatedNotes = [...notes];
+    updatedNotes.splice(index, 1);
+    setNotes(updatedNotes);
+    // const del=notes[index]
+    // const res=notes.filter((item)=>item!==del)
+    // setNotes(res)
+  };
 return (
     <>
 <div className=" p-1 border-danger bg-gray drawmain">
@@ -318,8 +326,8 @@ return (
     <div>
     {/* options */}
    <HuePicker color={selectedColor} onChange={handleColorChange} className='m-3' />
- {stickyShow? <div> <input value={inputText} onChange={handleInputChange} />
-      <button onClick={handleAddNote}>Add Note</button></div>:null}
+ {stickyShow? <div className='d-flex gap-1 flex-column flex-md-row'> <label htmlFor=""><input value={inputText} onChange={handleInputChange} /></label>
+      <button className='w-auto' onClick={handleAddNote}>Add</button></div>:null}
       </div>
     <div className="d-flex">
     {/* options */}
@@ -449,6 +457,7 @@ globalCompositeOperation={'source-over'}
                   handleNoteChange(index, newText);
                 }
               }}
+              onDelete={() => handleNoteDelete(index)}
             />
           ))}
 </Layer>
