@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSquare,faText } from '@fortawesome/free-solid-svg-icons';
 import { faPlay} from '@fortawesome/free-solid-svg-icons';
 import { BiText ,BiRectangle, BiBrush} from 'react-icons/bi';
-import { BsPencil,BsCameraVideo ,BsThreeDots,BsEmojiSunglasses,BsBell} from 'react-icons/bs';
+import { BsPencil,BsCameraVideo ,BsThreeDots,BsEmojiSunglasses,BsBell,BsStickyFill} from 'react-icons/bs';
 import { VscCircle,VscCommentDiscussion } from 'react-icons/vsc';
 import { GiAlarmClock} from 'react-icons/gi';
 import {Button,Popover , PopoverHeader, PopoverBody} from 'react-bootstrap';
@@ -14,6 +14,8 @@ import ColorPicker from './ColorPicker';
 import { SliderPicker, HuePicker } from 'react-color';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
+import StickyNote from './StickyNote';
+import Sticky from './StickyNote';
 const DrawingArea = () => {
   const [showPopover, setShowPopover] = useState(true);
   const [lines, setLines] = useState([]);
@@ -22,6 +24,8 @@ const DrawingArea = () => {
   const [rectangles, setRectangles] = useState([]);
   const [draw,setDraw]=useState([])
   const [inputtext,setInutText]=useState()
+  const [notes, setNotes] = useState([]);
+  const [stickyShow,setStickyShow]=useState(false)
  
 
   const [selectedTool, setSelectedTool] = useState('');
@@ -253,6 +257,26 @@ const DrawingArea = () => {
     updatedCircles[i].radius = newRadius;
     setCircles([...updatedCircles]);
   };
+  // sticky notes
+  const [inputText, setInputText] = useState("");
+
+  const handleInputChange = (event) => {
+    setInputText(event.target.value);
+  };
+
+  const handleAddNote = () => {
+    setNotes([
+      ...notes,
+      { x: 100, y: 100, width: 300, height: 300, text: inputText, draggable: true },
+    ]);
+    setInputText("");
+  };
+
+  const handleNoteChange = (index, newText) => {
+    const updatedNotes = [...notes];
+    updatedNotes[index].text = newText;
+    setNotes(updatedNotes);
+  };
 return (
     <>
 <div className=" p-1 border-danger bg-gray drawmain">
@@ -294,7 +318,8 @@ return (
     <div>
     {/* options */}
    <HuePicker color={selectedColor} onChange={handleColorChange} className='m-3' />
-
+ {stickyShow? <div> <input value={inputText} onChange={handleInputChange} />
+      <button onClick={handleAddNote}>Add Note</button></div>:null}
       </div>
     <div className="d-flex">
     {/* options */}
@@ -318,6 +343,10 @@ return (
           
           <BiBrush size={20} />
         </div>
+        <div className="p-2" onClick={()=>setStickyShow(!stickyShow)}>
+        <BsStickyFill/>
+        </div>
+      
         
         <div  onClick={() => setSelectedTool('rectangle')} className='p-2'> <BiRectangle size={20}/></div>
         
@@ -335,6 +364,7 @@ return (
 
       
         </div>
+        {/* <StickyNote/> */}
       <Stage
         width={window.innerWidth}
         height={window.innerHeight}
@@ -344,6 +374,7 @@ return (
         className="canvas-stage"
        
       >
+     
         <Layer>
           {lines.map((line, i) => (
             <Line
@@ -401,6 +432,25 @@ onDragMove={(e) => handleTextDragMove(e, i)}
 globalCompositeOperation={'source-over'}
 />
 ))}
+
+{notes.map((note, index) => (
+            <Sticky
+              key={index}
+              {...note}
+              onDragEnd={(event) => {
+                const updatedNotes = [...notes];
+                updatedNotes[index].x = event.target.x();
+                updatedNotes[index].y = event.target.y();
+                setNotes(updatedNotes);
+              }}
+              onChange={() => {
+                const newText = prompt("Enter new text:");
+                if (newText) {
+                  handleNoteChange(index, newText);
+                }
+              }}
+            />
+          ))}
 </Layer>
 </Stage>
 </div>
