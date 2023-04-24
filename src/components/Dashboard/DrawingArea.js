@@ -57,12 +57,12 @@ const DrawingArea = () => {
           lineRef.current = newLine.ref; // Update line ref
       setDraw([...draw, { points: [pos.x, pos.y] }])
     } else if (selectedTool === 'circle') {
-      setCircles([...circles, { x: pos.x, y: pos.y, radius: 0 }]);
-      setDraw([...draw, { x: pos.x, y: pos.y, radius: 0 }])
+      setCircles([...circles, { x: pos.x, y: pos.y, radius: 0 ,color:circleColor}]);
+      setDraw([...draw, { x: pos.x, y: pos.y, radius: 0 ,color:circleColor}])
     }
    else if (selectedTool === 'rectangle') {
-    setRectangles([...rectangles, { x: pos.x, y: pos.y, width: 0, height: 0 }]);
-    setDraw([...draw, { x: pos.x, y: pos.y, width: 0, height: 0 }])
+    setRectangles([...rectangles, { x: pos.x, y: pos.y, width: 0, height: 0 ,color:rectangleColor}]);
+    setDraw([...draw, { x: pos.x, y: pos.y, width: 0, height: 0,color:rectangleColor }])
   }
   else if (selectedTool === 'brush') {
     
@@ -220,7 +220,7 @@ const DrawingArea = () => {
     // Update the appropriate tool color state based on selected tool
     switch (selectedTool) {
       case 'brush':
-        setBrushColor(selectedColor);
+        setBrushColor(color.hex);
         break;
       case 'line':
         setLineColor(color.hex);
@@ -232,10 +232,10 @@ const DrawingArea = () => {
         setLine2Color(color.hex);
         break;
       case 'rectangle':
-          setRectangleColor(selectedColor);
+          setRectangleColor(color.hex);
           break;
       case 'circle':
-            setCircleColor(selectedColor);
+            setCircleColor(color.hex);
             break;
       default:
         break;
@@ -370,7 +370,7 @@ return (
               x={circle.x}
               y={circle.y}
 radius={circle.radius}
-stroke={circleColor}
+stroke={circle.color}
 strokeWidth={2}
 draggable={true}
 onDragMove={(e) => handleCircleDragMove(e, i)}
@@ -384,7 +384,7 @@ globalCompositeOperation={'source-over'}
         y={rectangle.y}
         width={rectangle.width}
         height={rectangle.height}
-        stroke={rectangleColor}
+        stroke={rectangle.color}
         strokeWidth={2}
         draggable={selectedTool === 'rectangle'}
       />
