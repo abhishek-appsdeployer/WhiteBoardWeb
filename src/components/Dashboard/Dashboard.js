@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import Whiteboard from './Whiteboard';
+
 import Dheader from './Dheader';
 import "./Dashboard.css";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import DrawingArea from './DrawingArea';
+import DrawingArea from '../Draw/DrawingArea';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementBoardCount, addBoard, deleteBoard, updateBoardName } from '../../Redux/Action/Action';

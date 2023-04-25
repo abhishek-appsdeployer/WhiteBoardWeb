@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import Dropdown from 'react-bootstrap/Dropdown';
+import React, { useEffect, useState } from "react";
+import Dropdown from "react-bootstrap/Dropdown";
 
 const Dheader = () => {
   const [name, setName] = useState();
@@ -7,8 +7,8 @@ const Dheader = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const storedInfo = localStorage.getItem('User');
-    console.log('Dashboard info', storedInfo);
+    const storedInfo = localStorage.getItem("User");
+    console.log("Dashboard info", storedInfo);
     if (storedInfo) {
       const parsedInfo = JSON.parse(storedInfo);
       setName(parsedInfo.username);
@@ -21,26 +21,21 @@ const Dheader = () => {
       <h1>WhiteBoard</h1>
       <div className="d-flex gap-3 align-items-center">
         <p className="py-1">
-          <i className="fas fa-bell " style={{ fontSize: '35px' }}></i>
+          <i className="fas fa-bell " style={{ fontSize: "35px" }}></i>
         </p>
 
         <Dropdown drop="start">
           <Dropdown.Toggle
             className="rounded-circle  -mt-1 toggle"
-            style={{ backgroundColor: '#28a745' }}
+            style={{ backgroundColor: "#28a745" }}
           >
-            {/* <div className="bg-sucess name" onClick={() => setIsOpen(!isOpen)}> */}
-              {/* <h2 className="p-1 px-3">{name ? name[0] : null}</h2> */}
-            {/* </div> */}
             {name ? name[0] : null}
           </Dropdown.Toggle>
 
           <Dropdown.Menu show={isOpen} className="p-10">
             <Dropdown.Item href="#/action-11">{name}</Dropdown.Item>
             <Dropdown.Item href="#/action-2">{email}</Dropdown.Item>
-            <Dropdown.Item href="/">
-            logout
-            </Dropdown.Item>
+            <Dropdown.Item href="/">logout</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
       </div>
