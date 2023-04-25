@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 
-import Dheader from './Dheader';
-import "./Dashboard.css";
+
+import "./dashboard.css";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import DrawingArea from '../Draw/DrawingArea';
+import DrawingArea from '../draw/drawingArea';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementBoardCount, addBoard, deleteBoard, updateBoardName } from '../../Redux/Action/Action';
+import { incrementBoardCount, addBoard, deleteBoard, updateBoardName } from '../../redux/action/action';
+import Dheader from './dashboardHeader';
 
 const Dashboard = () => {
   const [show, setShow] = useState(false);
@@ -73,7 +74,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <Dheader />
+      <Dheader/>
 
       {/* Recent board */}
       <h2 className='m-5'>Recent Board</h2>

@@ -1,7 +1,7 @@
 // dashboardStore.js
 
 import { createStore } from 'redux';
-import dashboardReducer from './Reducer/dashboardReducer';
+import dashboardReducer from './reducer/dashboardReducer';
 
 // Create and configure the Redux store
 const dashboardStore = createStore(dashboardReducer);

@@ -18,7 +18,7 @@ import Modal from "react-bootstrap/Modal";
 
 import { HuePicker } from "react-color";
 
-import Sticky from "./Sticky";
+import Sticky from "./sticky";
 const DrawingArea = () => {
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
