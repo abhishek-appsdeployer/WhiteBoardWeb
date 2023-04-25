@@ -566,7 +566,8 @@ const DrawingArea = () => {
             variant="primary"
             onClick={handleSaveChanges}
           >
-            Save
+          {/* save */}
+            Saves
           </Button>
         </Modal.Footer>
       </Modal>
