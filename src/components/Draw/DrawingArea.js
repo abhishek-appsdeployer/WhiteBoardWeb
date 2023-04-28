@@ -185,22 +185,44 @@ const DrawingArea = () => {
     }
   };
   //  // Functions calling when the mouse not click and start stop drawing
-  const handleMouseUp = () => {
+  const handleMouseUp = (e) => {
     isDrawing.current = false;
-    const newArrow = {
-      id: arrows.length + 1,
-      startX,
-      startY,
-      endX,
-      endY,
-      color: arrowColor,
-      strokeWidth: 2,
-    };
-    // arrows.splice(arrows.length - 1, 1, newArrow);
-    // setArrows([...arrows]);
-    setArrows([...arrows, newArrow]);
+    const stage = e.target.getStage();
+    const point = stage.getPointerPosition();
+    if (selectedTool === "arrow") {
+      const newArrow = {
+        id: arrows.length + 1,
+        startX,
+        startY,
+        endX,
+        endY,
+        color: arrowColor,
+        strokeWidth: 2,
+      };
 
-    console.log(arrows);
+      setArrows([...arrows, newArrow]);
+
+      console.log(arrows);
+    } else if (selectedTool === "rectangle") {
+      let last = rectangles[rectangles.length - 1];
+      if (last) {
+        const width = point.x - last.x;
+        const height = point.y - last.y;
+        if (width >= 1 && height >= 1) {
+          const newRectangle = {
+            x: last.x,
+            y: last.y,
+            width,
+            height,
+            color: rectangleColor,
+            strokeWidth: 2,
+          };
+          setRectangles([...rectangles, newRectangle]);
+        } else {
+          setRectangles(rectangles.slice(0, rectangles.length - 1));
+        }
+      }
+    }
   };
 
   // Functions for text drag move
