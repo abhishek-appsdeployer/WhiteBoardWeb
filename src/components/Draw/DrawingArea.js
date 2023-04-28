@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { Stage, Layer, Line, Circle, Text, Rect,Arrow } from "react-konva";
+import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 
 import { BiText, BiRectangle, BiBrush, BiArrowBack } from "react-icons/bi";
 import {
@@ -9,6 +9,7 @@ import {
   BsEmojiSunglasses,
   BsBell,
   BsStickyFill,
+  BsFileArrowUp,
 } from "react-icons/bs";
 import { VscCircle, VscCommentDiscussion } from "react-icons/vsc";
 import { GiAlarmClock } from "react-icons/gi";
@@ -19,23 +20,28 @@ import Modal from "react-bootstrap/Modal";
 import { HuePicker } from "react-color";
 
 import Sticky from "./sticky";
+import DrawerHeader from "./drawerHeader";
 const DrawingArea = () => {
+  // hooks for stroing different tools in the array
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
   const [texts, setTexts] = useState([]);
   const [rectangles, setRectangles] = useState([]);
-  const [startX, setStartX] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [endX, setEndX] = useState(0);
-  const [endY, setEndY] = useState(0);
+
   const [arrows, setArrows] = useState([]);
-  
+
   const [draw, setDraw] = useState([]);
   const [inputtext, setInutText] = useState();
   const [notes, setNotes] = useState([]);
   const [stickyShow, setStickyShow] = useState(false);
+  // These hooks for arrow points
+  const [startX, setStartX] = useState(0);
+  const [startY, setStartY] = useState(0);
+  const [endX, setEndX] = useState(0);
+  const [endY, setEndY] = useState(0);
 
   const [selectedTool, setSelectedTool] = useState("");
+  // hooks for different tool  color
   const [selectedColor, setSelectedColor] = useState("#0055ff");
   const [brushColor, setBrushColor] = useState("#000000");
   const [lineColor, setLineColor] = useState("#000000");
@@ -54,12 +60,11 @@ const DrawingArea = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  // Functions calling when the mouse click on the board start draawing
   const handleMouseDown = (e) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
-    
-   
-   
+
     if (selectedTool === "line") {
       const newLine = {
         points: [pos.x, pos.y],
@@ -112,18 +117,14 @@ const DrawingArea = () => {
       };
       setLines([...lines, newLine3]);
       lineRef3.current = newLine3.ref; // Update line3 ref
-    }
-    else if (selectedTool === "arrow")
-    {
-      
+    } else if (selectedTool === "arrow") {
       setStartX(pos.x);
       setStartY(pos.y);
-      
-      console.log(startX,startY)
-    }
-    
-  };
 
+      console.log(startX, startY);
+    }
+  };
+  // Functions calling when the mouse move on the board for start draawing
   const handleMouseMove = (e) => {
     if (!isDrawing.current) {
       return;
@@ -178,17 +179,12 @@ const DrawingArea = () => {
       };
       lines.splice(lines.length - 1, 1, newLine3);
       setLines([...lines]);
-    }
-    else if (selectedTool==="arrow") {
-     
+    } else if (selectedTool === "arrow") {
       setEndX(point.x);
       setEndY(point.y);
-
-      
-    };
-    
+    }
   };
-
+  //  // Functions calling when the mouse not click and start stop drawing
   const handleMouseUp = () => {
     isDrawing.current = false;
     const newArrow = {
@@ -203,10 +199,11 @@ const DrawingArea = () => {
     // arrows.splice(arrows.length - 1, 1, newArrow);
     // setArrows([...arrows]);
     setArrows([...arrows, newArrow]);
-    
-    console.log(arrows)
+
+    console.log(arrows);
   };
 
+  // Functions for text drag move
   const handleTextDragMove = (e, i) => {
     const updatedTexts = [...texts];
     const newX = e.target.x();
@@ -215,12 +212,11 @@ const DrawingArea = () => {
     updatedTexts[i].y = newY;
     setTexts([...updatedTexts]);
   };
-
+  // all types of lines in the array for checking the condition for undo
   const lineTools = ["line", "line2", "line3", "line4"];
 
   const handleUndo = () => {
     if (lineTools.includes(selectedTool)) {
-      const lastLine = lines[lines.length - 1];
       setLines(lines.slice(0, -1));
     } else if (selectedTool === "circle") {
       setCircles(circles.slice(0, circles.length - 1));
@@ -228,16 +224,20 @@ const DrawingArea = () => {
       setTexts(texts.slice(0, texts.length - 1));
     } else if (selectedTool === "rectangle") {
       setRectangles(rectangles.slice(0, rectangles.length - 1));
+    } else if (selectedTool === "arrow") {
+      setArrows(arrows.slice(0, arrows.length - 1));
     }
   };
-
+  // Functions for clearing the board
   const handleClear = () => {
     setLines([]);
     setCircles([]);
     setTexts([]);
     setRectangles([]);
     setNotes([]);
+    setArrows([]);
   };
+  // savechanges function for inpput text
   const handleSaveChanges = () => {
     // Function to handle the "Save Changes" button click in the modal
     if (inputtext) {
@@ -249,6 +249,7 @@ const DrawingArea = () => {
       setShow(false);
     }
   };
+  // color for different tools with diffeent color options
   const handleColorChange = (color) => {
     // Update the selected color state
     setSelectedColor(color.hex);
@@ -274,8 +275,8 @@ const DrawingArea = () => {
         setCircleColor(color.hex);
         break;
       case "arrow":
-          setArrowColor(color.hex);
-          break;
+        setArrowColor(color.hex);
+        break;
       default:
         break;
     }
@@ -285,7 +286,7 @@ const DrawingArea = () => {
 
     console.log("line", lineColor);
   };
-
+  // Function for circle move
   const handleCircleDragMove = (e, i) => {
     const updatedCircles = [...circles];
     const newRadius =
@@ -294,6 +295,7 @@ const DrawingArea = () => {
     updatedCircles[i].radius = newRadius;
     setCircles([...updatedCircles]);
   };
+  // Function for Rectangle move
   const handleRectangleDragMove = (e, i) => {
     const updatedRectangles = [...rectangles];
     const rect = updatedRectangles[i];
@@ -345,12 +347,13 @@ const DrawingArea = () => {
     ]);
     setInputText("");
   };
-
+  // edit the sticy notes function
   const handleNoteChange = (index, newText) => {
     const updatedNotes = [...notes];
     updatedNotes[index].text = newText;
     setNotes(updatedNotes);
   };
+  // For delete the sticky notes
   const handleNoteDelete = (index) => {
     const updatedNotes = [...notes];
     updatedNotes.splice(index, 1);
@@ -359,53 +362,14 @@ const DrawingArea = () => {
     // const res=notes.filter((item)=>item!==del)
     // setNotes(res)
   };
-  // share
-  const shareUrl = window.location.href;
-
-  const sharePage = async () => {
-    try {
-      await navigator.share({
-        title: "Draw",
-        text: "Check out this page!",
-        url: shareUrl,
-      });
-    } catch (error) {
-      console.error("Error sharing page:", error);
-    }
-  };
 
   return (
     <>
       <div className=" p-1 border-danger bg-gray drawmain">
-        {/* new header */}
-        <div className="d-flex flex-column gap-2 flex-lg-row justify-content-between m-2">
-          <p className="d-flex gap-2 bgwhite p-2">
-            <p style={{ fontSize: "20px", fontWeight: "bold" }}>Whiteboard</p>
-            <p>|</p>
-            <p>User Board</p>
-          </p>
-
-          <div className="bgwhite d-flex gap-3">
-            <GiAlarmClock size={23} />
-
-            <VscCommentDiscussion size={23} />
-
-            <BsCameraVideo size={23} />
-            <BsThreeDots size={23} />
-            <BsEmojiSunglasses size={23} />
-            <BsBell size={23} />
-          </div>
-
-          <div className=" d-flex gap-3 round-2">
-            <p className="circ"></p>
-            <p className="present text-light h6">Present</p>
-            <p className="present text-light h6" onClick={sharePage}>
-              Share
-            </p>
-          </div>
-        </div>
+        {/* header of the board */}
+        <DrawerHeader />
         <div>
-          {/* options */}
+          {/* options of the color */}
           <HuePicker
             color={selectedColor}
             onChange={handleColorChange}
@@ -422,10 +386,9 @@ const DrawingArea = () => {
               </button>
             </div>
           ) : null}
-          
         </div>
         <div className="d-flex">
-          {/* options */}
+          {/* options for draw in the board from icons select */}
           <div className="d-flex flex-column gap-1  ">
             <div
               className=" d-flex flex-column rounded gap-0.2 gap-md-1 gap-lg-1' m-2 "
@@ -471,7 +434,7 @@ const DrawingArea = () => {
               </div>
               <div onClick={() => setSelectedTool("arrow")} className="p-2">
                 {" "}
-                <BiArrowBack size={20} />
+                <BsFileArrowUp size={20} />
               </div>
 
               <div onClick={() => handleShow()} className="p-2">
@@ -494,7 +457,7 @@ const DrawingArea = () => {
               </div>
             </div>
           </div>
-          {/* <StickyNote/> */}
+          {/* code for drawing boards */}
           <Stage
             width={window.innerWidth}
             height={window.innerHeight}
@@ -503,32 +466,24 @@ const DrawingArea = () => {
             onMouseup={handleMouseUp}
             className="canvas-stage"
           >
-           
             <Layer>
-            {arrows.map((arrow) => (
-              <Arrow
-                key={arrow.id}
-                points={[arrow.startX, arrow.startY, arrow.endX, arrow.endY]}
-                stroke={arrow.color}
-                strokeWidth={arrow.strokeWidth}
-              />
-            ))}
+              {arrows.map((arrow) => (
+                <Arrow
+                  key={arrow.id}
+                  points={[arrow.startX, arrow.startY, arrow.endX, arrow.endY]}
+                  stroke={arrow.color}
+                  strokeWidth={arrow.strokeWidth}
+                  draggable
+                />
+              ))}
               {lines.map((line, i) => (
                 <Line
                   key={i}
                   points={line.points}
-                  stroke={
-                    line.color
-                    // line.line ? lineColor :
-                    // line.line2 ? line1Color :
-                    // line.line3 ? line2Color :
-                    // brushColor
-                  }
-                  // strokeWidth={line.line ?5: 80}
+                  stroke={line.color}
                   strokeWidth={
                     line.line ? 2 : line.line2 ? 10 : line.line3 ? 20 : 80
                   }
-                  // ref={line.line ? line.ref : brushRef.current}
                   ref={
                     line.line
                       ? line.ref
@@ -601,13 +556,11 @@ const DrawingArea = () => {
                   onDelete={() => handleNoteDelete(index)}
                 />
               ))}
-
-              
             </Layer>
           </Stage>
         </div>
       </div>
-      {/* Modal code */}
+      {/* Modal code for text input */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Enter the text:</Modal.Title>
@@ -626,7 +579,6 @@ const DrawingArea = () => {
             variant="primary"
             onClick={handleSaveChanges}
           >
-          {/* save */}
             Saves
           </Button>
         </Modal.Footer>
