@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Rect, Text, Stage, Layer, Group } from "react-konva";
 
-
+// sticky components
 const Sticky = ({
   x,
   y,

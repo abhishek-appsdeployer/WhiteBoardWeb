@@ -42,7 +42,7 @@ const DrawingArea = () => {
 
   const lineRef = useRef();
   const lineRef2 = useRef();
-  const lineRef3 = useRef(); // Ref to keep track of current line
+  const lineRef3 = useRef(); // Ref to keep track of current lines
   const brushRef = useRef();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);

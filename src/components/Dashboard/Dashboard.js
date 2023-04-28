@@ -77,7 +77,7 @@ const Dashboard = () => {
     <DashboardHeader/>
 
       {/* Recent board */}
-      <h2 className='m-5'>Recent Board</h2>
+      <h2 className='m-5'>Recent Boards</h2>
       <div className=' container'>
         <div className="d-flex gap-4 border-2 nb " onClick={handleShow}>
           <p className='bg-success plus h-5 rounded-3'> <i className="fas fa-plus text-light p-3 " style={{ fontSize: '30px' }}></i></p>
