@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 
-const Dheader = () => {
+const DashboardHeader = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,4 +43,4 @@ const Dheader = () => {
   );
 };
 
-export default Dheader;
+export default DashboardHeader;

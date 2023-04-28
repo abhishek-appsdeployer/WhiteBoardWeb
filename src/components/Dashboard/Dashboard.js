@@ -8,7 +8,7 @@ import DrawingArea from '../draw/drawingArea';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementBoardCount, addBoard, deleteBoard, updateBoardName } from '../../redux/action/action';
-import Dheader from './dashboardHeader';
+import DashboardHeader from './dashboardHeader';
 
 const Dashboard = () => {
   const [show, setShow] = useState(false);
@@ -74,7 +74,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <Dheader/>
+    <DashboardHeader/>
 
       {/* Recent board */}
       <h2 className='m-5'>Recent Board</h2>
