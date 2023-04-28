@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
-import { Stage, Layer, Line, Circle, Text, Rect } from "react-konva";
+import { Stage, Layer, Line, Circle, Text, Rect,Arrow } from "react-konva";
 
-import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
+import { BiText, BiRectangle, BiBrush, BiArrowBack } from "react-icons/bi";
 import {
   BsPencil,
   BsCameraVideo,
@@ -24,6 +24,12 @@ const DrawingArea = () => {
   const [circles, setCircles] = useState([]);
   const [texts, setTexts] = useState([]);
   const [rectangles, setRectangles] = useState([]);
+  const [startX, setStartX] = useState(0);
+  const [startY, setStartY] = useState(0);
+  const [endX, setEndX] = useState(0);
+  const [endY, setEndY] = useState(0);
+  const [arrows, setArrows] = useState([]);
+  
   const [draw, setDraw] = useState([]);
   const [inputtext, setInutText] = useState();
   const [notes, setNotes] = useState([]);
@@ -37,6 +43,7 @@ const DrawingArea = () => {
   const [line2Color, setLine2Color] = useState("#000000");
   const [rectangleColor, setRectangleColor] = useState("#000000");
   const [circleColor, setCircleColor] = useState("#000000");
+  const [arrowColor, setArrowColor] = useState("#000000");
 
   const isDrawing = useRef(false);
 
@@ -50,6 +57,9 @@ const DrawingArea = () => {
   const handleMouseDown = (e) => {
     isDrawing.current = true;
     const pos = e.target.getStage().getPointerPosition();
+    
+   
+   
     if (selectedTool === "line") {
       const newLine = {
         points: [pos.x, pos.y],
@@ -103,6 +113,15 @@ const DrawingArea = () => {
       setLines([...lines, newLine3]);
       lineRef3.current = newLine3.ref; // Update line3 ref
     }
+    else if (selectedTool === "arrow")
+    {
+      
+      setStartX(pos.x);
+      setStartY(pos.y);
+      
+      console.log(startX,startY)
+    }
+    
   };
 
   const handleMouseMove = (e) => {
@@ -160,10 +179,32 @@ const DrawingArea = () => {
       lines.splice(lines.length - 1, 1, newLine3);
       setLines([...lines]);
     }
+    else if (selectedTool==="arrow") {
+     
+      setEndX(point.x);
+      setEndY(point.y);
+
+      
+    };
+    
   };
 
   const handleMouseUp = () => {
     isDrawing.current = false;
+    const newArrow = {
+      id: arrows.length + 1,
+      startX,
+      startY,
+      endX,
+      endY,
+      color: arrowColor,
+      strokeWidth: 2,
+    };
+    // arrows.splice(arrows.length - 1, 1, newArrow);
+    // setArrows([...arrows]);
+    setArrows([...arrows, newArrow]);
+    
+    console.log(arrows)
   };
 
   const handleTextDragMove = (e, i) => {
@@ -232,6 +273,9 @@ const DrawingArea = () => {
       case "circle":
         setCircleColor(color.hex);
         break;
+      case "arrow":
+          setArrowColor(color.hex);
+          break;
       default:
         break;
     }
@@ -378,6 +422,7 @@ const DrawingArea = () => {
               </button>
             </div>
           ) : null}
+          
         </div>
         <div className="d-flex">
           {/* options */}
@@ -424,6 +469,10 @@ const DrawingArea = () => {
                 {" "}
                 <BiRectangle size={20} />
               </div>
+              <div onClick={() => setSelectedTool("arrow")} className="p-2">
+                {" "}
+                <BiArrowBack size={20} />
+              </div>
 
               <div onClick={() => handleShow()} className="p-2">
                 <BiText color="black" size={20} />
@@ -454,7 +503,16 @@ const DrawingArea = () => {
             onMouseup={handleMouseUp}
             className="canvas-stage"
           >
+           
             <Layer>
+            {arrows.map((arrow) => (
+              <Arrow
+                key={arrow.id}
+                points={[arrow.startX, arrow.startY, arrow.endX, arrow.endY]}
+                stroke={arrow.color}
+                strokeWidth={arrow.strokeWidth}
+              />
+            ))}
               {lines.map((line, i) => (
                 <Line
                   key={i}
@@ -543,6 +601,8 @@ const DrawingArea = () => {
                   onDelete={() => handleNoteDelete(index)}
                 />
               ))}
+
+              
             </Layer>
           </Stage>
         </div>

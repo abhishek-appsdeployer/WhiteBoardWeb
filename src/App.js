@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, HashRouter } from "react-router-dom";
 import Emailverify from "./components/signup/emailVerify";
 import Dashboard from "./components/dashboard/dashboard";
 import DrawingArea from "./components/draw/drawingArea";
+import Lines from "./components/draw/line";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="email" element={<Emailverify />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="drawing" element={<DrawingArea />} />
+        <Route path="line" element={<Lines/>} />
       </Routes>
     </HashRouter>
   );
