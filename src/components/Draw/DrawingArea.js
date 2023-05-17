@@ -22,6 +22,7 @@ import { HuePicker } from "react-color";
 import Sticky from "./sticky";
 import DrawerHeader from "./drawerHeader";
 const DrawingArea = () => {
+  const stageRef = useRef(null);
   // hooks for stroing different tools in the array
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
@@ -34,6 +35,12 @@ const DrawingArea = () => {
   const [inputtext, setInutText] = useState();
   const [notes, setNotes] = useState([]);
   const [stickyShow, setStickyShow] = useState(false);
+  // Redo hooks
+  const [linesRedoHistory, setLinesRedoHistory] = useState([]);
+  const [circlesRedoHistory, setCirclesRedoHistory] = useState([]);
+  const [textsRedoHistory, setTextsRedoHistory] = useState([]);
+  const [rectanglesRedoHistory, setRectanglesRedoHistory] = useState([]);
+  const [arrowsRedoHistory, setArrowsRedoHistory] = useState([]);
   // These hooks for arrow points
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
@@ -50,6 +57,8 @@ const DrawingArea = () => {
   const [rectangleColor, setRectangleColor] = useState("#000000");
   const [circleColor, setCircleColor] = useState("#000000");
   const [arrowColor, setArrowColor] = useState("#000000");
+  const [scale, setScale] = useState(1);
+
 
   const isDrawing = useRef(false);
 
@@ -60,6 +69,31 @@ const DrawingArea = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  // fucntion for export the canvas part only
+  const handleExport = () => {
+    const stage = stageRef.current;
+    const canvas = stage.toCanvas();
+
+    // Convert the canvas to a data URL
+    const dataURL = canvas.toDataURL("image/jpeg");
+
+    // Create a temporary link element
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = "stage.jpg";
+
+    // Programmatically click the link to trigger the download
+    link.click();
+  };
+  // zoom in zoom out
+  const handleZoomIn = () => {
+    setScale((prevScale) => prevScale + 0.1);
+  };
+
+  const handleZoomOut = () => {
+    setScale((prevScale) => (prevScale > 0.1 ? prevScale - 0.1 : prevScale));
+  };
+
   // Functions calling when the mouse click on the board start draawing
   const handleMouseDown = (e) => {
     isDrawing.current = true;
@@ -235,21 +269,112 @@ const DrawingArea = () => {
     setTexts([...updatedTexts]);
   };
   // all types of lines in the array for checking the condition for undo
-  const lineTools = ["line", "line2", "line3", "line4"];
+  const lineTools = ["line", "line2", "line3", "brush"];
 
+  // const handleUndo = () => {
+  //   if (lineTools.includes(selectedTool)) {
+  //     setLines(lines.slice(0, -1));
+  //   } else if (selectedTool === "circle") {
+  //     setCircles(circles.slice(0, circles.length - 1));
+  //   } else if (selectedTool === "text") {
+  //     setTexts(texts.slice(0, texts.length - 1));
+  //   } else if (selectedTool === "rectangle") {
+  //     setRectangles(rectangles.slice(0, rectangles.length - 1));
+  //   } else if (selectedTool === "arrow") {
+  //     setArrows(arrows.slice(0, arrows.length - 1));
+  //   }
+  // };
   const handleUndo = () => {
-    if (lineTools.includes(selectedTool)) {
-      setLines(lines.slice(0, -1));
-    } else if (selectedTool === "circle") {
-      setCircles(circles.slice(0, circles.length - 1));
-    } else if (selectedTool === "text") {
-      setTexts(texts.slice(0, texts.length - 1));
-    } else if (selectedTool === "rectangle") {
-      setRectangles(rectangles.slice(0, rectangles.length - 1));
-    } else if (selectedTool === "arrow") {
-      setArrows(arrows.slice(0, arrows.length - 1));
+    if (lineTools.includes(selectedTool) && lines.length > 0) {
+      setLines((prevLines) => {
+        const lastLine = prevLines[prevLines.length - 1];
+        setLinesRedoHistory((prevRedoHistory) => [
+          ...prevRedoHistory,
+          lastLine,
+        ]);
+        return prevLines.slice(0, -1);
+      });
+    } else if (selectedTool === "circle" && circles.length > 0) {
+      setCircles((prevCircles) => {
+        const lastCircle = prevCircles[prevCircles.length - 1];
+        setCirclesRedoHistory((prevRedoHistory) => [
+          ...prevRedoHistory,
+          lastCircle,
+        ]);
+        return prevCircles.slice(0, -1);
+      });
+    } else if (selectedTool === "text" && texts.length > 0) {
+      setTexts((prevTexts) => {
+        const lastText = prevTexts[prevTexts.length - 1];
+        setTextsRedoHistory((prevRedoHistory) => [
+          ...prevRedoHistory,
+          lastText,
+        ]);
+        return prevTexts.slice(0, -1);
+      });
+    } else if (selectedTool === "rectangle" && rectangles.length > 0) {
+      setRectangles((prevRectangles) => {
+        const lastRectangle = prevRectangles[prevRectangles.length - 1];
+        setRectanglesRedoHistory((prevRedoHistory) => [
+          ...prevRedoHistory,
+          lastRectangle,
+        ]);
+        return prevRectangles.slice(0, -1);
+      });
+    } else if (selectedTool === "arrow" && arrows.length > 0) {
+      setArrows((prevArrows) => {
+        const lastArrow = prevArrows[prevArrows.length - 1];
+        setArrowsRedoHistory((prevRedoHistory) => [
+          ...prevRedoHistory,
+          lastArrow,
+        ]);
+        return prevArrows.slice(0, -1);
+      });
     }
   };
+
+  const handleRedo = () => {
+    if (lineTools.includes(selectedTool) && linesRedoHistory.length > 0) {
+      setLines((prevLines) => {
+        const redoLine = linesRedoHistory[linesRedoHistory.length - 1];
+        setLinesRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
+        return [...prevLines, redoLine];
+      });
+    } else if (selectedTool === "circle" && circlesRedoHistory.length > 0) {
+      setCircles((prevCircles) => {
+        const redoCircle = circlesRedoHistory[circlesRedoHistory.length - 1];
+        setCirclesRedoHistory((prevRedoHistory) =>
+          prevRedoHistory.slice(0, -1)
+        );
+        return [...prevCircles, redoCircle];
+      });
+    } else if (
+      selectedTool === "rectangle" &&
+      rectanglesRedoHistory.length > 0
+    ) {
+      setRectangles((prevRectangles) => {
+        const redoRectangle =
+          rectanglesRedoHistory[rectanglesRedoHistory.length - 1];
+        setRectanglesRedoHistory((prevRedoHistory) =>
+          prevRedoHistory.slice(0, -1)
+        );
+        return [...prevRectangles, redoRectangle];
+      });
+    } else if (selectedTool === "arrow" && arrowsRedoHistory.length > 0) {
+      setArrows((prevArrows) => {
+        const redoArrow = arrowsRedoHistory[arrowsRedoHistory.length - 1];
+        setArrowsRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
+        return [...prevArrows, redoArrow];
+      });
+    } else if (selectedTool === "text" && textsRedoHistory.length > 0) {
+      setTexts((prevtexts) => {
+        const redoText = textsRedoHistory[textsRedoHistory.length - 1];
+        setTextsRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
+        return [...prevtexts, redoText];
+      });
+    }
+  };
+
   // Functions for clearing the board
   const handleClear = () => {
     setLines([]);
@@ -470,10 +595,38 @@ const DrawingArea = () => {
                   style={{ fontSize: "20px" }}
                 ></i>
               </div>
+              <div onClick={handleRedo}>
+                {" "}
+                <i
+                  className="fas fa-redo text-dark p-2 "
+                  style={{ fontSize: "20px" }}
+                ></i>
+              </div>
               <div onClick={handleClear}>
                 {" "}
                 <i
                   className="fas fa-trash text-dark t p-2 "
+                  style={{ fontSize: "20px" }}
+                ></i>
+              </div>
+              <div onClick={handleExport}>
+                {" "}
+                <i
+                  className="fas fa-download text-dark p-2 "
+                  style={{ fontSize: "20px" }}
+                ></i>
+              </div>
+              <div onClick={handleZoomIn}>
+                {" "}
+                <i
+                  className="fas fa fa-search-plus text-dark p-2 "
+                  style={{ fontSize: "20px" }}
+                ></i>
+              </div>
+              <div onClick={handleZoomOut}>
+                {" "}
+                <i
+                  className="fas fa fa-search-minus text-dark p-2 "
                   style={{ fontSize: "20px" }}
                 ></i>
               </div>
@@ -487,6 +640,9 @@ const DrawingArea = () => {
             onMousemove={handleMouseMove}
             onMouseup={handleMouseUp}
             className="canvas-stage"
+            ref={stageRef}
+            scaleX={scale}
+        scaleY={scale}
           >
             <Layer>
               {arrows.map((arrow) => (
@@ -605,6 +761,7 @@ const DrawingArea = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+     
     </>
   );
 };
