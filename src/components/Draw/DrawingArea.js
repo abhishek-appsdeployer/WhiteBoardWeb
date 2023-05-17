@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 
 import { BiText, BiRectangle, BiBrush, BiArrowBack } from "react-icons/bi";
+import ImageUpload from "./imageUpload";
 import {
   BsPencil,
   BsCameraVideo,
@@ -41,6 +42,7 @@ const DrawingArea = () => {
   const [textsRedoHistory, setTextsRedoHistory] = useState([]);
   const [rectanglesRedoHistory, setRectanglesRedoHistory] = useState([]);
   const [arrowsRedoHistory, setArrowsRedoHistory] = useState([]);
+  const [imagesRedoHistory, setImagesRedoHistory] = useState([]);
   // These hooks for arrow points
   const [startX, setStartX] = useState(0);
   const [startY, setStartY] = useState(0);
@@ -59,7 +61,6 @@ const DrawingArea = () => {
   const [arrowColor, setArrowColor] = useState("#000000");
   const [scale, setScale] = useState(1);
 
-
   const isDrawing = useRef(false);
 
   const lineRef = useRef();
@@ -69,6 +70,50 @@ const DrawingArea = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  // iamges
+  const [images, setImages] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleSelect = (id) => {
+    setSelectedId(id);
+  };
+
+  const handleDragEnd = (id, x, y) => {
+    const updatedImages = images.map((image) =>
+      image.id === id ? { ...image, x, y } : image
+    );
+    setImages(updatedImages);
+  };
+
+  const handleResize = (id, width, height) => {
+    const updatedImages = images.map((image) =>
+      image.id === id ? { ...image, width, height } : image
+    );
+    setImages(updatedImages);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const image = new window.Image();
+      image.src = e.target.result;
+      image.onload = () => {
+        const newImage = {
+          id: Date.now(), // Unique identifier for the image
+          src: image,
+          x: 0,
+          y: 0,
+          width: image.width,
+          height: image.height,
+        };
+        setImages([...images, newImage]);
+      };
+    };
+
+    reader.readAsDataURL(file);
+  };
   // fucntion for export the canvas part only
   const handleExport = () => {
     const stage = stageRef.current;
@@ -331,6 +376,16 @@ const DrawingArea = () => {
         return prevArrows.slice(0, -1);
       });
     }
+    else if (selectedTool === "photos" && images.length > 0) {
+      setImages((prevImages) => {
+        const lastImage = prevImages[prevImages.length - 1];
+        setImagesRedoHistory((prevRedoHistory) => [
+          ...prevRedoHistory,
+          lastImage,
+        ]);
+        return prevImages.slice(0, -1);
+      });
+    }
   };
 
   const handleRedo = () => {
@@ -383,6 +438,7 @@ const DrawingArea = () => {
     setRectangles([]);
     setNotes([]);
     setArrows([]);
+    setImages([]);
   };
   // savechanges function for inpput text
   const handleSaveChanges = () => {
@@ -630,6 +686,23 @@ const DrawingArea = () => {
                   style={{ fontSize: "20px" }}
                 ></i>
               </div>
+              <div
+  onClick={() => {
+    document.getElementById("imageUpload").click();
+    setSelectedTool("photos");
+  }}
+>
+                <input
+                  type="file"
+                  id="imageUpload"
+                  style={{ display: "none" }}
+                  onChange={handleImageUpload}
+                />{" "}
+                <i
+                  className="fa-solid fa-image text-dark p-2"
+                  style={{ fontSize: "20px" }}
+                ></i>
+              </div>
             </div>
           </div>
           {/* code for drawing boards */}
@@ -642,7 +715,7 @@ const DrawingArea = () => {
             className="canvas-stage"
             ref={stageRef}
             scaleX={scale}
-        scaleY={scale}
+            scaleY={scale}
           >
             <Layer>
               {arrows.map((arrow) => (
@@ -734,6 +807,20 @@ const DrawingArea = () => {
                   onDelete={() => handleNoteDelete(index)}
                 />
               ))}
+
+              {images.length > 0 &&
+                images.map((image) => (
+                  <ImageUpload
+                    key={image.id}
+                    image={image}
+                    isSelected={selectedId === image.id}
+                    onSelect={() => handleSelect(image.id)}
+                    onChange={(x, y) => handleDragEnd(image.id, x, y)}
+                    onResize={(width, height) =>
+                      handleResize(image.id, width, height)
+                    }
+                  />
+                ))}
             </Layer>
           </Stage>
         </div>
@@ -761,7 +848,7 @@ const DrawingArea = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-     
+      <input type="file" id="imageUpload" onChange={handleImageUpload} />
     </>
   );
 };
