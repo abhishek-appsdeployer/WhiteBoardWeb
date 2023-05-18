@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Stage, Layer, Arrow } from 'react-konva';
+import React, { useState, useRef } from "react";
+import { Stage, Layer, Arrow } from "react-konva";
 
 function Lines() {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -33,7 +33,7 @@ function Lines() {
         startY,
         endX,
         endY,
-        color: 'black',
+        color: "black",
         strokeWidth: 2,
       };
       setArrows([...arrows, newArrow]);
@@ -48,7 +48,7 @@ function Lines() {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        style={{ border: '1px solid black' }}
+        style={{ border: "1px solid black" }}
       >
         <Stage
           ref={stageRef}

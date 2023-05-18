@@ -1,59 +1,45 @@
-import React, { useState } from "react";
-import "./login.css";
+import React from "react";
+// import "./login.css";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import axios from "axios"; // Import Axios
 import jwt_decode from "jwt-decode";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const [emailErr, setEmailErr] = useState("");
-  const [passwordErr, setPasswordErr] = useState("");
+  const handleSignup = async (data) => {
+    const { email, password } = data;
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
-    // Do any necessary validation here
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailErr("Please enter a valid email address");
-    } else if (password === "") {
-      setEmailErr("");
-      setPasswordErr("Empty password");
-    } else {
-      try {
-        const response = await axios.post(
-          "https://task.appdeployers.com/api/deployer/login",
-          { email, password }
-        );
-        console.log(response);
-        const token = response.data.token; // Extract token from response
-        // const decodedToken = jwt_decode(token); // Decode token using jwt_decode library (imported separately)
-        console.log("Decoded Token:", token); // Log the decoded token to the console
-        setEmailErr("");
-        setPasswordErr("");
-        if (response.data.success) {
-          alert(`Login Successful!`);
+    try {
+      const response = await axios.post(
+        "https://task.appdeployers.com/api/deployer/login",
+        { email, password }
+      );
 
-          // var info =jwt_decode(response.data.token)
-          // console.log(info)
-          // localStorage.setItem("User", JSON.stringify(info));
-          localStorage.setItem("User", JSON.stringify(response.data.user));
-          navigate("/dashboard");
-        } else {
-          setPasswordErr("Invalid credentials");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Invalid details");
-        // Handle any error responses from the API here
+      const token = response.data.token; // Extract token from response
+      // const decodedToken = jwt_decode(token); // Decode token using jwt_decode library (imported separately)
+
+      if (response.data.success) {
+        alert(`Login Successful!`);
+        localStorage.setItem("User", JSON.stringify(response.data.user));
+        navigate("/dashboard");
+      } else {
+        alert("Invalid credentials");
       }
+    } catch (error) {
+      alert("Invalid details");
+      // Handle any error responses from the API here
     }
   };
 
   return (
-    <div class="">
+    <div className="">
       {/* header for login */}
       <div className="d-flex flex-sm-row flex-column justify-content-between p-5">
         <h1>WhiteBoard</h1>
@@ -71,35 +57,68 @@ const Login = () => {
       </div>
 
       {/* login form codes  */}
-      <div className="d-flex center">
-        <form onSubmit={handleSignup}>
-          <label htmlFor="" className="my-2">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </label>
+      <div className="d-flex justify-content-center align-items-center">
+  <form onSubmit={handleSubmit(handleSignup)} style={{ maxWidth: "400px", width: "100%", padding: "20px" }}>
+    <label htmlFor="" className="my-2 w-100">
+      <input
+        style={{
+          width: "100%",
+          padding: "20px",
+          borderRadius: "10px",
+          border: "1px solid gray",
+        }}
+        type="email"
+        placeholder="Email"
+        {...register("email", {
+          required: "Email is required",
+          pattern: {
+            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            message: "Please enter a valid email address",
+          },
+        })}
+      />
+    </label>
+    {errors.email && (
+      <p className="text-danger">{errors.email.message}</p>
+    )}
+    <br />
 
-          <br />
-          {emailErr ? <p className="text-danger">{emailErr}</p> : null}
-          <label htmlFor="" className="my-1">
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </label>
-          <br />
-          {passwordErr ? <p className="text-danger">{passwordErr}</p> : null}
-          <p className="px-2">
-            <u>I forgot my password</u>
-          </p>
-          <button type="submit display-5">Sign in</button>
-        </form>
-      </div>
+    <label htmlFor="" className="my-1 w-100">
+      <input
+        style={{
+          width: "100%",
+          padding: "20px",
+          borderRadius: "10px",
+          border: "1px solid gray",
+        }}
+        type="password"
+        placeholder="Password"
+        {...register("password", { required: "Password is required" })}
+      />
+    </label>
+    {errors.password && (
+      <p className="text-danger">{errors.password.message}</p>
+    )}
+
+    <p className="px-2">
+      <u>I forgot my password</u>
+    </p>
+    <button
+      type="submit"
+      className="rounded-5 w-100"
+      style={{
+        backgroundColor: "#4262ff",
+        color: "white",
+        borderRadius: "10px",
+        padding: "20px",
+        marginTop: "10px"
+      }}
+    >
+      Sign in
+    </button>
+  </form>
+</div>
+
     </div>
   );
 };

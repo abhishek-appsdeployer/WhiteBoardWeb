@@ -8,7 +8,7 @@ const DashboardHeader = () => {
 
   useEffect(() => {
     const storedInfo = localStorage.getItem("User");
-    console.log("Dashboard info", storedInfo);
+  ;
     if (storedInfo) {
       const parsedInfo = JSON.parse(storedInfo);
       setName(parsedInfo.username);

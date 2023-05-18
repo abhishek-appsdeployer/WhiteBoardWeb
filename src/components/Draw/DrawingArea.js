@@ -200,7 +200,8 @@ const DrawingArea = () => {
       setStartX(pos.x);
       setStartY(pos.y);
 
-      console.log(startX, startY);
+      
+
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -281,7 +282,7 @@ const DrawingArea = () => {
 
       setArrows([...arrows, newArrow]);
 
-      console.log(arrows);
+    
     } else if (selectedTool === "rectangle") {
       let last = rectangles[rectangles.length - 1];
       if (last) {
@@ -375,8 +376,7 @@ const DrawingArea = () => {
         ]);
         return prevArrows.slice(0, -1);
       });
-    }
-    else if (selectedTool === "photos" && images.length > 0) {
+    } else if (selectedTool === "photos" && images.length > 0) {
       setImages((prevImages) => {
         const lastImage = prevImages[prevImages.length - 1];
         setImagesRedoHistory((prevRedoHistory) => [
@@ -427,6 +427,12 @@ const DrawingArea = () => {
         setTextsRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
         return [...prevtexts, redoText];
       });
+    } else if (selectedTool === "photos" && imagesRedoHistory.length > 0) {
+      setImages((previmages) => {
+        const redoImage = imagesRedoHistory[imagesRedoHistory.length - 1];
+        setImagesRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
+        return [...previmages, redoImage];
+      });
     }
   };
 
@@ -456,7 +462,7 @@ const DrawingArea = () => {
   const handleColorChange = (color) => {
     // Update the selected color state
     setSelectedColor(color.hex);
-    console.log(selectedTool);
+  
     // Update the appropriate tool color state based on selected tool
     switch (selectedTool) {
       case "brush":
@@ -483,11 +489,7 @@ const DrawingArea = () => {
       default:
         break;
     }
-    console.log(color.hex);
-    console.log("line1", line1Color);
-    console.log("line2", line2Color);
-
-    console.log("line", lineColor);
+   
   };
   // Function for circle move
   const handleCircleDragMove = (e, i) => {
@@ -568,7 +570,7 @@ const DrawingArea = () => {
 
   return (
     <>
-      <div className=" p-1 border-danger bg-gray drawmain">
+      <div className=" p-1 border-danger bg-gray " style={{backgroundColor:"#f5f5f5", overflow:"hidden"}}>
         {/* header of the board */}
         <DrawerHeader />
         <div>
@@ -687,11 +689,11 @@ const DrawingArea = () => {
                 ></i>
               </div>
               <div
-  onClick={() => {
-    document.getElementById("imageUpload").click();
-    setSelectedTool("photos");
-  }}
->
+                onClick={() => {
+                  document.getElementById("imageUpload").click();
+                  setSelectedTool("photos");
+                }}
+              >
                 <input
                   type="file"
                   id="imageUpload"
@@ -848,7 +850,6 @@ const DrawingArea = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <input type="file" id="imageUpload" onChange={handleImageUpload} />
     </>
   );
 };

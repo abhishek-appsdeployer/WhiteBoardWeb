@@ -1,58 +1,48 @@
-import React, { useState } from "react";
-// import "./Login.css"
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import axios from "axios";
+
 const Signup = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
-  const [emailErr, setEmailErr] = useState("");
-  const [passwordErr, setPasswordErr] = useState("");
-  const [userNameErr, setUserNameErr] = useState("");
-  const [userName, setUserName] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+  const handleSignup = async (data) => {
     // Do any necessary validation or API calls here
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailErr("Please enter a valid email address");
-    } else if (password == "") {
-      setEmailErr("");
-      setPasswordErr("Empty password");
-    } else if (userName == "") {
-      setPasswordErr("");
-      setUserNameErr("User Name missing");
-    } else {
-      setUserNameErr("");
-      try {
-        // Send signup data to the API
-        const response = await axios.post(
-          "https://task.appdeployers.com/api/deployer/register",
-          {
-            email: email,
-            password: password,
-            username: userName,
-            otp: otp,
-          }
-        );
-        console.log(response);
-        // Handle successful signup
-        // Navigate to the login screen
-        alert("Signup successfully");
-        navigate("/login");
-      } catch (error) {
-        // Handle error
-        console.error(error);
-      }
+  
+    const { email, password, userName, otp } = data;
+
+
+    try {
+      // Send signup data to the API
+      const response = await axios.post(
+        "https://task.appdeployers.com/api/deployer/register",
+        {
+          email: email,
+          password: password,
+          username: userName,
+          otp: otp,
+        }
+      );
+      
+      // Handle successful signup
+      // Navigate to the login screen
+      alert("Signup successful");
+      navigate("/login");
+    } catch (error) {
+      // Handle error
+      alert(error)
+      
     }
   };
 
   return (
     <div className="">
       {/* header for login */}
-
       <div className="d-flex flex-sm-row flex-column justify-content-between p-5">
         <h1>WhiteBoard</h1>
         <div className="d-flex gap-3">
@@ -69,54 +59,103 @@ const Signup = () => {
       </div>
 
       {/* login form codes  */}
-      <div className="d-flex center">
-        <form onSubmit={handleSignup}>
+      <div className="d-flex center" 
+      style={{ justifyContent: "center", textAlign: "center" }}>
+        <form onSubmit={handleSubmit(handleSignup)} style={{ maxWidth: "400px", width: "100%", padding: "20px" }}>
           <h1>Signup for free today</h1>
           <p className="text-center">
             We recommend using your work email — <br /> it keeps work and life
             separate.
           </p>
-          <label htmlFor="" className="my-2">
-            <input
+          <label htmlFor="" className="my-2 w-100">
+            <input 
+            style={{
+                width: "100%",
+                padding: "20px",
+                borderRadius: "10px",
+                border: "1px solid gray",
+              }}
               type="email"
               placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Please enter a valid email address",
+                },
+              })}
             />
           </label>
-
           <br />
-          {emailErr ? <p className="text-danger">{emailErr}</p> : null}
-          <label htmlFor="" className="my-1">
-            <input
+          {errors.email && (
+            <p className="text-danger">{errors.email.message}</p>
+          )}
+          <label htmlFor="" className="my-1 w-100">
+            <input 
+            style={{
+                width: "100%",
+                padding: "20px",
+                borderRadius: "10px",
+                border: "1px solid gray",
+              }}
               type="password"
               placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              {...register("password", { required: "Password is required" })}
             />
           </label>
           <br />
-          {passwordErr ? <p className="text-danger">{passwordErr}</p> : null}
-          <label htmlFor="" className="my-2">
-            <input
+          {errors.password && (
+            <p className="text-danger">{errors.password.message}</p>
+          )}
+          <label htmlFor="" className="my-2 w-100">
+            <input 
+            style={{
+                width: "100%",
+                padding: "20px",
+                borderRadius: "10px",
+                border: "1px solid gray",
+              }}
               type="text"
               placeholder="User name"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              {...register("userName", { required: "User Name is required" })}
             />
           </label>
           <br />
-          {userNameErr ? <p className="text-danger">{userNameErr}</p> : null}
-          <label htmlFor="" className="my-2">
-            <input
+          {errors.userName && (
+            <p className="text-danger">{errors.userName.message}</p>
+          )}
+          <label htmlFor="" className="my-2 w-100">
+            <input 
+            style={{
+                width: "100%",
+                padding: "20px",
+                borderRadius: "10px",
+                border: "1px solid gray",
+              }}
               type="text"
-              placeholder="Otp"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
+              placeholder="OTP"
+              {...register("otp", {
+                required: "OTP is required",
+               
+              })}
             />
           </label>
           <br />
-          <button type="submit" className="">
+          {errors.otp && (
+            <p className="text-danger">{errors.otp.message}</p>
+          )}
+          <button type="submit" className="rounded-5 w-100"
+          style={{
+              backgroundColor: "#4262ff",
+              color: "white",
+              borderRadius: "10px",
+              width: "400px",
+              padding: "20px",
+              "@media (max-width: 600px)": {
+                width: "240px",
+                display: "none",
+              },
+            }}>
             Sign up
           </button>
         </form>
@@ -126,3 +165,4 @@ const Signup = () => {
 };
 
 export default Signup;
+

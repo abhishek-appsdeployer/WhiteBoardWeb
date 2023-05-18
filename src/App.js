@@ -18,7 +18,7 @@ const App = () => {
         <Route path="email" element={<Emailverify />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="drawing" element={<DrawingArea />} />
-        <Route path="line" element={<Lines/>} />
+        <Route path="line" element={<Lines />} />
       </Routes>
     </HashRouter>
   );

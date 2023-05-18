@@ -1,42 +1,35 @@
-import React, { useState } from "react";
-// import "./Login.css"
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import axios from "axios";
 
 const Emailverify = () => {
-  const [email, setEmail] = useState("");
-  const [emailErr, setEmailErr] = useState("");
   const navigate = useNavigate();
-  const handleEmailverify = async (e) => {
-    e.preventDefault();
-    // Do any necessary validation or API calls here
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setEmailErr("Please enter a valid email address");
-    } else {
-      try {
-        // Call the API to verify email
-        const datas = {
-          email: email,
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  const handleEmailverify = async (data) => {
+    try {
+      const response = await axios.post(
+        "https://task.appdeployers.com/api/deployer/emailverification",
+        {
+          email: data.email,
           account_type: "Normal",
-        };
-        const response = await axios.post(
-          "https://task.appdeployers.com/api/deployer/emailverification",
-          datas
-        );
-        const data = response.data;
-        if (data.success) {
-          // If API response is successful, navigate to signup page
-          alert("Verification Code is sent to your email");
-          navigate("/signup");
-        } else {
-          // If API response is not successful, show error message
-          setEmailErr("Email verification failed. Please try again.");
         }
-      } catch (error) {
-        console.error(error);
-        setEmailErr("An error occurred. Please try again.");
+      );
+      const responseData = response.data;
+      if (responseData.success) {
+        alert("Verification Code is sent to your email");
+        navigate("/signup");
+      } else {
+        alert("Email verification failed. Please try again.");
       }
+    } catch (error) {
+      
+      alert("An error occurred. Please try again.");
     }
   };
 
@@ -59,27 +52,50 @@ const Emailverify = () => {
       </div>
 
       {/* login form codes  */}
-      <div className="d-flex center">
-        <form onSubmit={handleEmailverify}>
+      <div className="d-flex center"
+        style={{ justifyContent: "center", textAlign: "center" }}
+      >
+        <form onSubmit={handleSubmit(handleEmailverify)} style={{ maxWidth: "400px", width: "100%", padding: "20px" }}>
           <h1>Email verify for free today</h1>
           <p className="text-center">
-            We recommend using your work email — <br /> it keeps work and life
-            separate.
+            We recommend using your work email — <br /> it keeps work and life separate.
           </p>
-          <label htmlFor="" className="my-2">
+          <label htmlFor="" className="my-2 w-100">
             <input
+             style={{
+                width: "100%",
+                padding: "20px",
+                borderRadius: "10px",
+                border: "1px solid gray",
+              }}
               type="email"
               placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              {...register("email", {
+                required: "Email is required",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Please enter a valid email address",
+                },
+              })}
             />
           </label>
 
-          {emailErr ? <p className="text-danger">{emailErr}</p> : null}
+          {errors.email && (
+            <p className="text-danger">{errors.email.message}</p>
+          )}
 
           <br />
 
-          <button type="submit" className="">
+          <button type="submit" className="rounded-5 w-100"
+          style={{
+              backgroundColor: "#4262ff",
+              color: "white",
+              borderRadius: "10px",
+          
+              padding: "20px",
+             
+            }}
+          >
             Agree
           </button>
         </form>
