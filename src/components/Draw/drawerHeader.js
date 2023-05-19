@@ -1,18 +1,16 @@
 import React from "react";
 import {
-  BsPencil,
   BsCameraVideo,
   BsThreeDots,
   BsEmojiSunglasses,
   BsBell,
-  BsStickyFill,
-  BsFileArrowUp,
 } from "react-icons/bs";
-import { VscCircle, VscCommentDiscussion } from "react-icons/vsc";
+import { VscCommentDiscussion } from "react-icons/vsc";
 import { GiAlarmClock } from "react-icons/gi";
+
 const DrawerHeader = () => {
   const shareUrl = window.location.href;
-  // share function for url
+
   const sharePage = async () => {
     try {
       await navigator.share({
@@ -20,33 +18,90 @@ const DrawerHeader = () => {
         text: "Check out this page!",
         url: shareUrl,
       });
-    } catch (error) {
-     
-    }
+    } catch (error) {}
   };
+
   return (
-    <div className="d-flex flex-column gap-2 flex-lg-row justify-content-between m-2">
-      <p className="d-flex gap-2  p-2" style={{backgroundColor:"white",padding:"10px",height:"40px",width:"fit-content",borderRadius:"10px"}}>
-        <p style={{ fontSize: "20px", fontWeight: "bold" }}>Whiteboard</p>
-        <p>|</p>
-        <p>User Board</p>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: "0.5rem",
+        justifyContent: "space-between",
+        margin: "0.5rem 0",
+      }}
+    >
+      <p
+        style={{
+          backgroundColor: "white",
+          padding: "10px",
+          height: "40px",
+          width: "fit-content",
+          borderRadius: "10px",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        <span style={{ fontSize: "20px", fontWeight: "bold" }}>Whiteboard</span>
+        <span>|</span>
+        <span>User Board</span>
       </p>
 
-      <div className=" d-flex gap-3"  style={{backgroundColor:"white",padding:"10px",height:"40px",width:"fit-content",borderRadius:"10px"}}>
+      <div
+        style={{
+          backgroundColor: "white",
+          padding: "10px",
+          height: "40px",
+          width: "fit-content",
+          borderRadius: "10px",
+          display: "flex",
+          gap: "0.5rem",
+          alignItems: "center",
+        }}
+      >
         <GiAlarmClock size={23} />
-
         <VscCommentDiscussion size={23} />
-
         <BsCameraVideo size={23} />
         <BsThreeDots size={23} />
         <BsEmojiSunglasses size={23} />
         <BsBell size={23} />
       </div>
 
-      <div className=" d-flex gap-3 round-2">
-        <p className="" style={{width:"40px",height:"40px",borderRadius:"20px",backgroundColor:"gray"}}></p>
-        <p className=" text-light h6" style={{backgroundColor:"gray",borderRadius:"5px",padding:"10px",height:"fit-content"}}>Present</p>
-        <p className="present text-light h6" onClick={sharePage} style={{backgroundColor:"gray",borderRadius:"5px",padding:"10px",height:"fit-content"}}>
+      <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+        <div
+          style={{
+            width: "40px",
+            height: "40px",
+            borderRadius: "20px",
+            backgroundColor: "gray",
+          }}
+        ></div>
+        <p
+          style={{
+            backgroundColor: "gray",
+            borderRadius: "5px",
+            padding: "10px",
+            height: "fit-content",
+            margin: "0",
+            color: "white",
+            height: "40px",
+          }}
+        >
+          Present
+        </p>
+        <p
+          onClick={sharePage}
+          style={{
+            backgroundColor: "gray",
+            borderRadius: "5px",
+            padding: "10px",
+            height: "fit-content",
+            margin: "0",
+            color: "white",
+            height: "40px",
+          }}
+        >
           Share
         </p>
       </div>

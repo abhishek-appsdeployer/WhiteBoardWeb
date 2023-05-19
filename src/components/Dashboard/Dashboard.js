@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import DrawingArea from "../draw/drawingArea";
+
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -11,6 +11,8 @@ import {
   updateBoardName,
 } from "../../redux/action/action";
 import DashboardHeader from "./dashboardHeader";
+import { BiEdit } from "react-icons/bi";
+import { BsPlus, BsTrash } from "react-icons/bs";
 
 const Dashboard = () => {
   const [showModal, setShowModal] = useState(false);
@@ -63,8 +65,8 @@ const Dashboard = () => {
   const boardComponents = boards.map((board, index) => (
     <div key={index}>
       <div
-        className="d-flex del"
         style={{
+          display: "flex",
           justifyContent: "space-between",
           marginTop: "10px",
           padding: "10px",
@@ -75,22 +77,22 @@ const Dashboard = () => {
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
         <Link to="/drawing" style={{ textDecoration: "none" }}>
-          <h1 className="text-dark">{board}</h1>
+          <h1 style={{ color: "black" }}>{board}</h1>
         </Link>
-        <div className="d-flex">
-          <div onClick={() => handleEditBoardName(index)}>
-            <i
-              className="fas fa-edit text-danger p-3 "
-              style={{ fontSize: "35px" }}
-            />
+        <div style={{ display: "flex" }}>
+          <div
+            onClick={() => handleEditBoardName(index)}
+            style={{ padding: "5px", color: "red" }}
+          >
+            <BiEdit size={40} />
           </div>
 
-          <div onClick={() => deleteBoardItem(board)}>
+          <div
+            onClick={() => deleteBoardItem(board)}
+            style={{ padding: "5px", color: "red" }}
+          >
             {" "}
-            <i
-              className="fas fa-trash text-danger p-3 "
-              style={{ fontSize: "35px" }}
-            ></i>
+            <BsTrash size={40} />
           </div>
         </div>
       </div>
@@ -98,26 +100,32 @@ const Dashboard = () => {
   ));
 
   return (
-    <div>
+    <div style={{backgroundColor:"gray",height:"100vh"}}>
       <DashboardHeader />
       {/* Recent board */}
-      <h2 className="m-5">Recent Boards</h2>
-      <div className=" container">
+      <h2 style={{ margin: "40px" }}>Recent Boards</h2>
+      <div style={{ margin: "0 auto", maxWidth: "1140px", padding: "0 15px" }}>
         <div
-          className="d-flex gap-4 border-2  "
           style={{
+            display: "flex",
+            gap: "4px",
+            borderRadius: "10px",
             padding: "10px",
             borderRadius: "20px",
             border: "1.5px solid green",
           }}
           onClick={handleShow}
         >
-          <p className="bg-success plus h-5 rounded-3">
+          <p
+            style={{
+              backgroundColor: "green",
+              borderRadius: "0.375rem",
+              padding: "12px",
+              color: "white",
+            }}
+          >
             {" "}
-            <i
-              className="fas fa-plus text-light p-3 "
-              style={{ fontSize: "30px" }}
-            ></i>
+            <BsPlus size={40} />
           </p>
           <h1>New Board</h1>
         </div>
@@ -145,8 +153,8 @@ const Dashboard = () => {
         </Modal>
       </div>{" "}
       {/* Render the list of boards */}
-      <div className="container ">
-        <div className="">{boardComponents}</div>
+      <div style={{ margin: "0 auto", maxWidth: "1140px", padding: "0 15px" }}>
+        <div>{boardComponents}</div>
       </div>
     </div>
   );

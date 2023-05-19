@@ -33,18 +33,34 @@ const Emailverify = () => {
   };
 
   return (
-    <div className="">
+    <div>
       {/* header for login */}
-      <div className="d-flex flex-sm-row flex-column justify-content-between p-5">
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          padding: "5rem",
+        }}
+      >
         <h1>WhiteBoard</h1>
-        <div className="d-flex gap-3">
-          <p className="py-1">
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <p style={{ padding: "1px 0" }}>
             <i className="fas fa-globe"></i>
             {"  "}En
           </p>
           <Link to="/login">
             <div>
-              <p className="border border-dark px-3 py-1 rounded-2">Sign in</p>
+              <p
+                style={{
+                  border: "1px solid #343a40",
+                  padding: "0.5rem 1rem",
+                  borderRadius: "0.25rem",
+                }}
+              >
+                Sign in
+              </p>
             </div>
           </Link>
         </div>
@@ -52,19 +68,22 @@ const Emailverify = () => {
 
       {/* login form codes  */}
       <div
-        className="d-flex center"
-        style={{ justifyContent: "center", textAlign: "center" }}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
       >
         <form
           onSubmit={handleSubmit(handleEmailverify)}
           style={{ maxWidth: "400px", width: "100%", padding: "20px" }}
         >
           <h1>Email verify for free today</h1>
-          <p className="text-center">
+          <p style={{ textAlign: "center" }}>
             We recommend using your work email — <br /> it keeps work and life
             separate.
           </p>
-          <label htmlFor="" className="my-2 w-100">
+          <label style={{ margin: "0.5rem 0", width: "100%" }}>
             <input
               style={{
                 width: "100%",
@@ -85,19 +104,20 @@ const Emailverify = () => {
           </label>
 
           {errors.email && (
-            <p className="text-danger">{errors.email.message}</p>
+            <p style={{ color: "danger" }}>{errors.email.message}</p>
           )}
 
           <br />
 
           <button
             type="submit"
-            className="rounded-5 w-100"
             style={{
               backgroundColor: "#4262ff",
               color: "white",
               borderRadius: "10px",
               padding: "20px",
+              width: "100%",
+              borderRadius: "50px",
             }}
           >
             Agree

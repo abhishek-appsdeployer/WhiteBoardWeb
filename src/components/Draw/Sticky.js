@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Rect, Text, Stage, Layer, Group } from "react-konva";
+import React from "react";
+import { Rect, Text,  Group } from "react-konva";
 
 // sticky components
 const Sticky = ({
