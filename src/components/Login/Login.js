@@ -14,12 +14,12 @@ const Login = () => {
   } = useForm();
 
   const handleSignup = async (data) => {
-    const { email, password } = data;
+    // const { email, password } = data;
 
     try {
       const response = await axios.post(
         "https://task.appdeployers.com/api/deployer/login",
-        { email, password }
+         { email: data.email, password: data.password } 
       );
 
       const token = response.data.token; // Extract token from response

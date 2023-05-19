@@ -28,7 +28,6 @@ const Emailverify = () => {
         alert("Email verification failed. Please try again.");
       }
     } catch (error) {
-      
       alert("An error occurred. Please try again.");
     }
   };
@@ -52,17 +51,22 @@ const Emailverify = () => {
       </div>
 
       {/* login form codes  */}
-      <div className="d-flex center"
+      <div
+        className="d-flex center"
         style={{ justifyContent: "center", textAlign: "center" }}
       >
-        <form onSubmit={handleSubmit(handleEmailverify)} style={{ maxWidth: "400px", width: "100%", padding: "20px" }}>
+        <form
+          onSubmit={handleSubmit(handleEmailverify)}
+          style={{ maxWidth: "400px", width: "100%", padding: "20px" }}
+        >
           <h1>Email verify for free today</h1>
           <p className="text-center">
-            We recommend using your work email — <br /> it keeps work and life separate.
+            We recommend using your work email — <br /> it keeps work and life
+            separate.
           </p>
           <label htmlFor="" className="my-2 w-100">
             <input
-             style={{
+              style={{
                 width: "100%",
                 padding: "20px",
                 borderRadius: "10px",
@@ -86,14 +90,14 @@ const Emailverify = () => {
 
           <br />
 
-          <button type="submit" className="rounded-5 w-100"
-          style={{
+          <button
+            type="submit"
+            className="rounded-5 w-100"
+            style={{
               backgroundColor: "#4262ff",
               color: "white",
               borderRadius: "10px",
-          
               padding: "20px",
-             
             }}
           >
             Agree

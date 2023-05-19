@@ -13,24 +13,22 @@ import {
 import DashboardHeader from "./dashboardHeader";
 
 const Dashboard = () => {
-  const [show, setShow] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [boardName, setBoardName] = useState("");
 
-  
   const [editingBoardIndex, setEditingBoardIndex] = useState(-1); // State for tracking the index of the board being edited
   const boards = useSelector((state) => state.boards);
-
 
   const boardCount = useSelector((state) => state.boardCount);
   const dispatch = useDispatch();
 
   const handleClose = () => {
-    setShow(false);
+    setShowModal(false);
     setEditingBoardIndex(-1); // Reset the editing board index
     setBoardName(""); // Reset the board name state
   };
 
-  const handleShow = () => setShow(true);
+  const handleShow = () => setShowModal(true);
 
   const deleteBoardItem = (name) => {
     dispatch(deleteBoard(name));
@@ -40,7 +38,7 @@ const Dashboard = () => {
     if (boardName) {
       if (editingBoardIndex !== -1) {
         // If editing a board, update the board name
-      
+
         dispatch(updateBoardName(editingBoardIndex, boardName));
       } else {
         // If adding a new board, dispatch actions to increment board count and add board
@@ -64,7 +62,16 @@ const Dashboard = () => {
 
   const boardComponents = boards.map((board, index) => (
     <div key={index}>
-      <div className="d-flex del" style={{justifyContent:"space-between",marginTop:"10px",padding:"10px",borderRadius:"10px",border:"2px solid green"}}>
+      <div
+        className="d-flex del"
+        style={{
+          justifyContent: "space-between",
+          marginTop: "10px",
+          padding: "10px",
+          borderRadius: "10px",
+          border: "2px solid green",
+        }}
+      >
         {/* Render each board component */}
         {/* You can replace this with your actual board component */}
         <Link to="/drawing" style={{ textDecoration: "none" }}>
@@ -96,7 +103,15 @@ const Dashboard = () => {
       {/* Recent board */}
       <h2 className="m-5">Recent Boards</h2>
       <div className=" container">
-        <div className="d-flex gap-4 border-2  " style={{padding:"10px",borderRadius:"20px",border:"1.5px solid green"}} onClick={handleShow}>
+        <div
+          className="d-flex gap-4 border-2  "
+          style={{
+            padding: "10px",
+            borderRadius: "20px",
+            border: "1.5px solid green",
+          }}
+          onClick={handleShow}
+        >
           <p className="bg-success plus h-5 rounded-3">
             {" "}
             <i
@@ -107,7 +122,7 @@ const Dashboard = () => {
           <h1>New Board</h1>
         </div>
         {/* Modal code */}
-        <Modal show={show} onHide={handleClose}>
+        <Modal show={showModal} onHide={handleClose}>
           <Modal.Header closeButton>
             <Modal.Title>
               {editingBoardIndex !== -1 ? "Edit Board" : "New Board"}
