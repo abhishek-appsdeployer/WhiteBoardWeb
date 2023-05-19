@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { Stage, Layer, Image as KonvaImage, Transformer } from "react-konva";
+import React, {  useRef } from "react";
+import { Image as KonvaImage, Transformer } from "react-konva";
 
 function ImageUpload({ image, isSelected, onSelect, onChange, onResize }) {
   const shapeRef = useRef(null);

@@ -1,12 +1,20 @@
 import React from "react";
-
 import { Link } from "react-router-dom";
-import "./home.css";
 const Home = () => {
   return (
     <>
-      <div className="main">
-        <div className="d-flex flex-column flex-sm-row gap-2 gap-sm-5 justify-content-end mx-5 pt-5">
+      <div style={{ backgroundColor: "gray", height: "100vh" }}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: "0.5rem",
+            gap: "1rem",
+            justifyContent: "flex-end",
+            marginLeft: "5rem",
+            paddingTop: "5rem",
+          }}
+        >
           <Link
             to="login"
             style={{
@@ -18,7 +26,15 @@ const Home = () => {
             }}
           >
             {" "}
-            <p className="border border-dark px-3 py-1 rounded-2 ho">Sign in</p>
+            <p
+              style={{
+                border: "1px solid #343a40",
+                padding: "0.5rem 1rem",
+                borderRadius: "0.25rem",
+              }}
+            >
+              Sign in
+            </p>
           </Link>
           <Link
             to="email"
@@ -31,12 +47,27 @@ const Home = () => {
             }}
           >
             {" "}
-            <p className="border border-dark px-3 py-1 rounded-2 ho">Signup</p>
+            <p
+              style={{
+                border: "1px solid #343a40",
+                padding: "0.5rem 1rem",
+                borderRadius: "0.25rem",
+              }}
+            >
+              Signup
+            </p>
           </Link>
         </div>
 
-        <div className=" ">
-          <h1 className="wh">WhiteBoard</h1>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh",
+          }}
+        >
+          <h1 style={{ color: "white" }}>WhiteBoard</h1>
         </div>
       </div>
     </>

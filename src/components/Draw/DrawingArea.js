@@ -1,19 +1,22 @@
 import React, { useState, useRef } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 
-import { BiText, BiRectangle, BiBrush, BiArrowBack } from "react-icons/bi";
+import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
 import {
   BsPencil,
-  BsCameraVideo,
-  BsThreeDots,
-  BsEmojiSunglasses,
-  BsBell,
   BsStickyFill,
   BsFileArrowUp,
+  BsEraser,
+  BsTrashFill,
+  BsDownload,
+  BsZoomIn,
+  BsZoomOut,
 } from "react-icons/bs";
-import { VscCircle, VscCommentDiscussion } from "react-icons/vsc";
-import { GiAlarmClock } from "react-icons/gi";
+import { FaRedo, FaUndoAlt } from "react-icons/fa";
+import { HiOutlinePhotograph } from "react-icons/hi";
+import { VscCircle } from "react-icons/vsc";
+
 import { Button } from "react-bootstrap";
 
 import Modal from "react-bootstrap/Modal";
@@ -67,6 +70,7 @@ const DrawingArea = () => {
   const lineRef2 = useRef();
   const lineRef3 = useRef(); // Ref to keep track of current lines
   const brushRef = useRef();
+  const eraserRef = useRef();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -196,11 +200,18 @@ const DrawingArea = () => {
       };
       setLines([...lines, newLine3]);
       lineRef3.current = newLine3.ref; // Update line3 ref
+    } else if (selectedTool === "eraser") {
+      const newEraser = {
+        points: [pos.x, pos.y],
+        eraser: true,
+        ref: React.createRef(),
+        color: "white", // set the line color to lineColor1
+      };
+      setLines([...lines, newEraser]);
+      eraserRef.current = newEraser.ref; // Update line3 ref
     } else if (selectedTool === "arrow") {
       setStartX(pos.x);
       setStartY(pos.y);
-
-      console.log(startX, startY);
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -258,6 +269,13 @@ const DrawingArea = () => {
       };
       lines.splice(lines.length - 1, 1, newLine3);
       setLines([...lines]);
+    } else if (selectedTool === "eraser") {
+      const newEraser = {
+        ...lines[lines.length - 1],
+        points: lines[lines.length - 1].points.concat([point.x, point.y]),
+      };
+      lines.splice(lines.length - 1, 1, newEraser);
+      setLines([...lines]);
     } else if (selectedTool === "arrow") {
       setEndX(point.x);
       setEndY(point.y);
@@ -280,8 +298,6 @@ const DrawingArea = () => {
       };
 
       setArrows([...arrows, newArrow]);
-
-      console.log(arrows);
     } else if (selectedTool === "rectangle") {
       let last = rectangles[rectangles.length - 1];
       if (last) {
@@ -375,8 +391,7 @@ const DrawingArea = () => {
         ]);
         return prevArrows.slice(0, -1);
       });
-    }
-    else if (selectedTool === "photos" && images.length > 0) {
+    } else if (selectedTool === "photos" && images.length > 0) {
       setImages((prevImages) => {
         const lastImage = prevImages[prevImages.length - 1];
         setImagesRedoHistory((prevRedoHistory) => [
@@ -427,6 +442,12 @@ const DrawingArea = () => {
         setTextsRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
         return [...prevtexts, redoText];
       });
+    } else if (selectedTool === "photos" && imagesRedoHistory.length > 0) {
+      setImages((previmages) => {
+        const redoImage = imagesRedoHistory[imagesRedoHistory.length - 1];
+        setImagesRedoHistory((prevRedoHistory) => prevRedoHistory.slice(0, -1));
+        return [...previmages, redoImage];
+      });
     }
   };
 
@@ -456,7 +477,7 @@ const DrawingArea = () => {
   const handleColorChange = (color) => {
     // Update the selected color state
     setSelectedColor(color.hex);
-    console.log(selectedTool);
+
     // Update the appropriate tool color state based on selected tool
     switch (selectedTool) {
       case "brush":
@@ -483,11 +504,6 @@ const DrawingArea = () => {
       default:
         break;
     }
-    console.log(color.hex);
-    console.log("line1", line1Color);
-    console.log("line2", line2Color);
-
-    console.log("line", lineColor);
   };
   // Function for circle move
   const handleCircleDragMove = (e, i) => {
@@ -568,140 +584,158 @@ const DrawingArea = () => {
 
   return (
     <>
-      <div className=" p-1 border-danger bg-gray drawmain">
+      <div
+        style={{
+          padding: "1px",
+          borderColor: "red",
+          backgroundColor: "#f5f5f5",
+          overflow: "hidden",
+        }}
+      >
         {/* header of the board */}
         <DrawerHeader />
-        <div>
+        <div style={{ margin: "20px" }}>
           {/* options of the color */}
-          <HuePicker
-            color={selectedColor}
-            onChange={handleColorChange}
-            className="m-3"
-          />
+          <HuePicker color={selectedColor} onChange={handleColorChange} />
           {stickyShow ? (
-            <div className="d-flex gap-1 flex-column flex-md-row">
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                flexDirection: "row",
+                flexWrap: "wrap",
+                paddingTop: "20px",
+              }}
+            >
               {" "}
               <label htmlFor="">
                 <input value={inputText} onChange={handleInputChange} />
               </label>
-              <button className="w-auto" onClick={handleAddNote}>
+              <button style={{ width: "auto" }} onClick={handleAddNote}>
                 Add
               </button>
             </div>
           ) : null}
         </div>
-        <div className="d-flex">
+        <div style={{ display: "flex" }}>
           {/* options for draw in the board from icons select */}
-          <div className="d-flex flex-column gap-1  ">
+          <div
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
             <div
-              className=" d-flex flex-column rounded gap-0.2 gap-md-1 gap-lg-1' m-2 "
-              style={{ backgroundColor: "white" }}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                borderRadius: "0.2rem",
+                gap: "0.2rem",
+                margin: "0.2rem",
+                backgroundColor: "white",
+              }}
             >
-              <div onClick={() => setSelectedTool("line")} className="p-2">
+              <div
+                onClick={() => setSelectedTool("line")}
+                style={{ padding: "12px" }}
+              >
                 <BsPencil size={20} color="red" />
               </div>
 
               <div
                 onClick={() => setSelectedTool("line2")}
-                className="p-2"
-                style={{ color: "green", fontWeight: "bold" }}
+                style={{ color: "green", fontWeight: "bold", padding: "12px" }}
               >
                 <BsPencil size={20} color="green" />
               </div>
 
               <div
                 onClick={() => setSelectedTool("line3")}
-                className="p-2"
-                style={{ color: "blue", fontWeight: "bold" }}
+                style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
               >
                 <BsPencil size={20} color="blue" />
               </div>
+              <div
+                onClick={() => setSelectedTool("eraser")}
+                style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
+              >
+                <BsEraser size={20} color="blue" />
+              </div>
 
-              <div onClick={() => setSelectedTool("circle")} className="p-2">
+              <div
+                onClick={() => setSelectedTool("circle")}
+                style={{ padding: "12px" }}
+              >
                 <VscCircle size={20} />
               </div>
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
-                className="p-2"
+                style={{ padding: "12px" }}
               >
                 <BiBrush size={20} />
               </div>
-              <div className="p-2" onClick={() => setStickyShow(!stickyShow)}>
+              <div
+                style={{ padding: "12px" }}
+                onClick={() => setStickyShow(!stickyShow)}
+              >
                 <BsStickyFill />
               </div>
 
-              <div onClick={() => setSelectedTool("rectangle")} className="p-2">
+              <div
+                onClick={() => setSelectedTool("rectangle")}
+                style={{ padding: "12px" }}
+              >
                 {" "}
                 <BiRectangle size={20} />
               </div>
-              <div onClick={() => setSelectedTool("arrow")} className="p-2">
+              <div
+                onClick={() => setSelectedTool("arrow")}
+                style={{ padding: "12px" }}
+              >
                 {" "}
                 <BsFileArrowUp size={20} />
               </div>
 
-              <div onClick={() => handleShow()} className="p-2">
+              <div onClick={() => handleShow()} style={{ padding: "12px" }}>
                 <BiText color="black" size={20} />
               </div>
 
-              <div onClick={handleUndo}>
+              <div onClick={handleUndo} style={{ padding: "12px" }}>
                 {" "}
-                <i
-                  className="fas fa-undo text-dark p-2 "
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <FaUndoAlt color="black" size={20} />
               </div>
-              <div onClick={handleRedo}>
+              <div onClick={handleRedo} style={{ padding: "12px" }}>
                 {" "}
-                <i
-                  className="fas fa-redo text-dark p-2 "
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <FaRedo color="black" size={20} />
               </div>
-              <div onClick={handleClear}>
+              <div onClick={handleClear} style={{ padding: "12px" }}>
                 {" "}
-                <i
-                  className="fas fa-trash text-dark t p-2 "
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <BsTrashFill size={20} />
               </div>
-              <div onClick={handleExport}>
+              <div onClick={handleExport} style={{ padding: "12px" }}>
                 {" "}
-                <i
-                  className="fas fa-download text-dark p-2 "
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <BsDownload size={20} />
               </div>
-              <div onClick={handleZoomIn}>
+              <div onClick={handleZoomIn} style={{ padding: "12px" }}>
                 {" "}
-                <i
-                  className="fas fa fa-search-plus text-dark p-2 "
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <BsZoomIn size={20} />
               </div>
-              <div onClick={handleZoomOut}>
+              <div onClick={handleZoomOut} style={{ padding: "12px" }}>
                 {" "}
-                <i
-                  className="fas fa fa-search-minus text-dark p-2 "
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <BsZoomOut size={20} />
               </div>
               <div
-  onClick={() => {
-    document.getElementById("imageUpload").click();
-    setSelectedTool("photos");
-  }}
->
+                onClick={() => {
+                  document.getElementById("imageUpload").click();
+                  setSelectedTool("photos");
+                }}
+                style={{ padding: "12px" }}
+              >
                 <input
                   type="file"
                   id="imageUpload"
                   style={{ display: "none" }}
                   onChange={handleImageUpload}
                 />{" "}
-                <i
-                  className="fa-solid fa-image text-dark p-2"
-                  style={{ fontSize: "20px" }}
-                ></i>
+                <HiOutlinePhotograph size={20} />
               </div>
             </div>
           </div>
@@ -716,6 +750,7 @@ const DrawingArea = () => {
             ref={stageRef}
             scaleX={scale}
             scaleY={scale}
+            style={{ background: "white" }}
           >
             <Layer>
               {arrows.map((arrow) => (
@@ -840,7 +875,7 @@ const DrawingArea = () => {
         </Modal.Body>
         <Modal.Footer>
           <Button
-            className="w-auto"
+            style={{ width: "auto" }}
             variant="primary"
             onClick={handleSaveChanges}
           >
@@ -848,7 +883,6 @@ const DrawingArea = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <input type="file" id="imageUpload" onChange={handleImageUpload} />
     </>
   );
 };
