@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
-
+import Dropdown from "react-bootstrap/Dropdown";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
 import {
@@ -12,6 +12,7 @@ import {
   BsDownload,
   BsZoomIn,
   BsZoomOut,
+  BsFillStickyFill,
 } from "react-icons/bs";
 import { FaRedo, FaUndoAlt } from "react-icons/fa";
 import { HiOutlinePhotograph } from "react-icons/hi";
@@ -25,9 +26,15 @@ import { HuePicker } from "react-color";
 
 import Sticky from "./sticky";
 import DrawerHeader from "./drawerHeader";
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Popover from 'react-bootstrap/Popover';
+
+
+
 const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
+  const [isOpen,setIsOpen]=useState(false)
   const [lines, setLines] = useState([]);
   const [circles, setCircles] = useState([]);
   const [texts, setTexts] = useState([]);
@@ -118,6 +125,158 @@ const DrawingArea = () => {
 
     reader.readAsDataURL(file);
   };
+  // popover elements
+  const popover = (
+
+  
+    <Popover id="popover-basic">
+      
+      <Popover.Body>
+      <div style={{display:"flex"}}>
+      
+      <div
+      onClick={()=>handleColorChange("#FF0000")}
+           
+            style={{
+              backgroundColor: "red",
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              margin: '6px',
+              cursor: 'pointer',
+            }}
+          >
+          </div>
+          
+      
+         
+      <div
+      onClick={()=>handleColorChange("#00FF00")}
+           
+            style={{
+              backgroundColor: "green",
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              margin: '6px',
+              cursor: 'pointer',
+            }}
+          >
+          </div>
+          <div
+      onClick={()=>handleColorChange("#0000FF")}
+           
+            style={{
+              backgroundColor: "blue",
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              margin: '6px',
+              cursor: 'pointer',
+            }}
+          >
+          </div>
+          </div>
+      <div
+                  onClick={() => setSelectedTool("line")}
+                  style={{ padding: "12px" }}
+                >
+                  <BsPencil size={20} color="red" />
+                </div>
+  
+                <div
+                  onClick={() => setSelectedTool("line2")}
+                  style={{ color: "green", fontWeight: "bold", padding: "12px" }}
+                >
+                  <BsPencil size={20} color="green" />
+                </div>
+  
+                <div
+                  onClick={() => setSelectedTool("line3")}
+                  style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
+                >
+                  <BsPencil size={20} color="blue" />
+                </div>
+      </Popover.Body>
+    </Popover>
+  );
+ 
+  const popoverSticky = (
+
+  
+    <Popover id="popover-basic">
+      
+      <Popover.Body>
+      <div style={{display:"flex"}}>
+      
+      <div
+      onClick={()=>setSelectedColor("#FF0000")}
+           
+            style={{
+              backgroundColor: "red",
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              margin: '6px',
+              cursor: 'pointer',
+            }}
+          >
+          </div>
+          
+      
+         
+      <div
+      onClick={()=>setSelectedColor("#00FF00")}
+           
+            style={{
+              backgroundColor: "green",
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              margin: '6px',
+              cursor: 'pointer',
+            }}
+          >
+          </div>
+          <div
+      onClick={()=>setSelectedColor("#0000FF")}
+           
+            style={{
+              backgroundColor: "blue",
+              borderRadius: '50%',
+              width: '24px',
+              height: '24px',
+              margin: '6px',
+              cursor: 'pointer',
+            }}
+          >
+          </div>
+          </div>
+      <div
+                    onClick={() => handleAddNote(200,200)}
+                  style={{ padding: "12px" }}
+                >
+                  <BsFillStickyFill size={20} color="red" />
+                </div>
+  
+                <div
+                    onClick={() => handleAddNote(300,200)}
+                  style={{ padding: "12px" }}
+                >
+                  <BsFillStickyFill size={20} color="red" />
+                </div>
+  
+                <div
+                    onClick={() => handleAddNote(400,400)}
+                  style={{ padding: "12px" }}
+                >
+                  <BsFillStickyFill size={40} color="red" />
+                </div>
+      </Popover.Body>
+    </Popover>
+  );
+
+
   // fucntion for export the canvas part only
   const handleExport = () => {
     const stage = stageRef.current;
@@ -477,20 +636,20 @@ const DrawingArea = () => {
   const handleColorChange = (color) => {
     // Update the selected color state
     setSelectedColor(color.hex);
-
+// alert(color)
     // Update the appropriate tool color state based on selected tool
     switch (selectedTool) {
       case "brush":
         setBrushColor(color.hex);
         break;
       case "line":
-        setLineColor(color.hex);
+        setLineColor(color);
         break;
       case "line2":
-        setLine1Color(color.hex);
+        setLine1Color(color.hex || color);
         break;
       case "line3":
-        setLine2Color(color.hex);
+        setLine2Color(color.hex || color);
         break;
       case "rectangle":
         setRectangleColor(color.hex);
@@ -552,16 +711,17 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = () => {
+  const handleAddNote = (w,h) => {
     setNotes([
       ...notes,
       {
         x: 100,
         y: 100,
-        width: 300,
-        height: 300,
+        width: w,
+        height: h,
         text: inputText,
         draggable: true,
+        color:selectedColor
       },
     ]);
     setInputText("");
@@ -632,26 +792,16 @@ const DrawingArea = () => {
                 backgroundColor: "white",
               }}
             >
-              <div
+             <OverlayTrigger trigger="click" placement="right" overlay={popover} rootClose={true}>
+     <div
                 onClick={() => setSelectedTool("line")}
                 style={{ padding: "12px" }}
               >
                 <BsPencil size={20} color="red" />
               </div>
-
-              <div
-                onClick={() => setSelectedTool("line2")}
-                style={{ color: "green", fontWeight: "bold", padding: "12px" }}
-              >
-                <BsPencil size={20} color="green" />
-              </div>
-
-              <div
-                onClick={() => setSelectedTool("line3")}
-                style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
-              >
-                <BsPencil size={20} color="blue" />
-              </div>
+    </OverlayTrigger>
+            
+             
               <div
                 onClick={() => setSelectedTool("eraser")}
                 style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
@@ -678,6 +828,15 @@ const DrawingArea = () => {
               >
                 <BsStickyFill />
               </div>
+              {/* stickynotes */}
+              <OverlayTrigger trigger="click" placement="right" overlay={popoverSticky} rootClose={true}>
+     <div
+                onClick={() => setSelectedTool("line")}
+                style={{ padding: "12px" }}
+              >
+                 <BsStickyFill />
+              </div>
+    </OverlayTrigger>
 
               <div
                 onClick={() => setSelectedTool("rectangle")}

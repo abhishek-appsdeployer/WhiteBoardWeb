@@ -1,17 +1,24 @@
 import React from "react";
 import { Link } from "react-router-dom";
+
 const Home = () => {
   return (
     <>
-      <div style={{ backgroundColor: "gray", height: "100vh" }}>
+      <div
+        style={{
+          backgroundColor: "gray",
+          height: "100vh",
+          overflow: "hidden",
+        }}
+      >
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
+            flexDirection: "row",
             gap: "0.5rem",
-            gap: "1rem",
+            flexWrap: "wrap",
             justifyContent: "flex-end",
-            marginLeft: "5rem",
+            marginRight: "5rem",
             paddingTop: "5rem",
           }}
         >
@@ -23,9 +30,9 @@ const Home = () => {
               fontSize: "20px",
               fontWeight: "bold",
               width: "fit-content",
+              marginRight: "1rem",
             }}
           >
-            {" "}
             <p
               style={{
                 border: "1px solid #343a40",
@@ -44,9 +51,9 @@ const Home = () => {
               fontSize: "20px",
               fontWeight: "bold",
               width: "fit-content",
+              marginRight: "1rem",
             }}
           >
-            {" "}
             <p
               style={{
                 border: "1px solid #343a40",
