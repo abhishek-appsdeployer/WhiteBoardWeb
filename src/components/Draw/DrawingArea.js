@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
-import Dropdown from "react-bootstrap/Dropdown";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
+import Rectangle from "./Rectangle";
 import {
   BsPencil,
   BsStickyFill,
@@ -28,6 +28,9 @@ import Sticky from "./sticky";
 import DrawerHeader from "./drawerHeader";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
+import CustomPopover from "./popover";
+import CustomStickyPopover from "./customStickyPopover";
+import Pen from "./pen";
 
 const DrawingArea = () => {
   const stageRef = useRef(null);
@@ -124,68 +127,6 @@ const DrawingArea = () => {
     reader.readAsDataURL(file);
   };
   // popover elements
-  const popover = (
-    <Popover id="popover-basic">
-      <Popover.Body>
-        <div style={{ display: "flex" }}>
-          <div
-            onClick={() => handleColorChange("#FF0000")}
-            style={{
-              backgroundColor: "red",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              margin: "6px",
-              cursor: "pointer",
-            }}
-          ></div>
-
-          <div
-            onClick={() => handleColorChange("#00FF00")}
-            style={{
-              backgroundColor: "green",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              margin: "6px",
-              cursor: "pointer",
-            }}
-          ></div>
-          <div
-            onClick={() => handleColorChange("#0000FF")}
-            style={{
-              backgroundColor: "blue",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              margin: "6px",
-              cursor: "pointer",
-            }}
-          ></div>
-        </div>
-        <div
-          onClick={() => setSelectedTool("line")}
-          style={{ padding: "12px" }}
-        >
-          <BsPencil size={20} color="red" />
-        </div>
-
-        <div
-          onClick={() => setSelectedTool("line2")}
-          style={{ color: "green", fontWeight: "bold", padding: "12px" }}
-        >
-          <BsPencil size={20} color="green" />
-        </div>
-
-        <div
-          onClick={() => setSelectedTool("line3")}
-          style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
-        >
-          <BsPencil size={20} color="blue" />
-        </div>
-      </Popover.Body>
-    </Popover>
-  );
 
   const popoverSticky = (
     <Popover id="popover-basic">
@@ -464,19 +405,7 @@ const DrawingArea = () => {
   // all types of lines in the array for checking the condition for undo
   const lineTools = ["line", "line2", "line3", "brush"];
 
-  // const handleUndo = () => {
-  //   if (lineTools.includes(selectedTool)) {
-  //     setLines(lines.slice(0, -1));
-  //   } else if (selectedTool === "circle") {
-  //     setCircles(circles.slice(0, circles.length - 1));
-  //   } else if (selectedTool === "text") {
-  //     setTexts(texts.slice(0, texts.length - 1));
-  //   } else if (selectedTool === "rectangle") {
-  //     setRectangles(rectangles.slice(0, rectangles.length - 1));
-  //   } else if (selectedTool === "arrow") {
-  //     setArrows(arrows.slice(0, arrows.length - 1));
-  //   }
-  // };
+ 
   const handleUndo = () => {
     if (lineTools.includes(selectedTool) && lines.length > 0) {
       setLines((prevLines) => {
@@ -768,7 +697,7 @@ const DrawingArea = () => {
               <OverlayTrigger
                 trigger="click"
                 placement="right"
-                overlay={popover}
+                overlay={CustomPopover({ handleColorChange, setSelectedTool })}
                 rootClose={true}
               >
                 <div
@@ -776,6 +705,20 @@ const DrawingArea = () => {
                   style={{ padding: "12px" }}
                 >
                   <BsPencil size={20} color="red" />
+                </div>
+              </OverlayTrigger>
+               {/* stickynotes */}
+               <OverlayTrigger
+                trigger="click"
+                placement="right"
+                overlay={CustomStickyPopover({  setSelectedColor })}
+                rootClose={true}
+              >
+                <div
+                  onClick={() => handleAddNote(200,300)}
+                  style={{ padding: "12px" }}
+                >
+                  <BsStickyFill />
                 </div>
               </OverlayTrigger>
 
@@ -805,20 +748,7 @@ const DrawingArea = () => {
               >
                 <BsStickyFill />
               </div>
-              {/* stickynotes */}
-              <OverlayTrigger
-                trigger="click"
-                placement="right"
-                overlay={popoverSticky}
-                rootClose={true}
-              >
-                <div
-                  onClick={() => setSelectedTool("line")}
-                  style={{ padding: "12px" }}
-                >
-                  <BsStickyFill />
-                </div>
-              </OverlayTrigger>
+             
 
               <div
                 onClick={() => setSelectedTool("rectangle")}
@@ -924,6 +854,27 @@ const DrawingArea = () => {
                   }
                 />
               ))}
+              {/* {selectedTool === 'line'  && <Pen lines={lines}/>} */}
+              {/* {selectedTool === 'line'  && lines.map((line, i) => (
+          <Pen
+            key={i}
+            line={line.line}
+            line2={line.line2}
+            line3={line.line3}
+            ref={
+              line.line
+                ? line.ref
+                : line.line2
+                ? lineRef2.current
+                : line.line3
+                ? lineRef3.current
+                : null
+            }
+            points={line.points}
+            color={line.color}
+            strokeWidth={line.line ? 2 : line.line2 ? 10 : line.line3 ? 20 : 80}
+          />
+        ))} */}
               {circles.map((circle, i) => (
                 <Circle
                   key={i}
@@ -951,6 +902,7 @@ const DrawingArea = () => {
                   onDragMove={(e) => handleRectangleDragMove(e, i)}
                 />
               ))}
+             
               {texts.map((text, i) => (
                 <Text
                   key={i}
@@ -984,6 +936,7 @@ const DrawingArea = () => {
                 />
               ))}
 
+           
               {images.length > 0 &&
                 images.map((image) => (
                   <ImageUpload
