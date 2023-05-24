@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
-import Rectangle from "./Rectangle";
+
 import {
   BsPencil,
   BsStickyFill,
@@ -17,13 +17,9 @@ import {
 import { FaRedo, FaUndoAlt } from "react-icons/fa";
 import { HiOutlinePhotograph } from "react-icons/hi";
 import { VscCircle } from "react-icons/vsc";
-
-import { Button } from "react-bootstrap";
-
-import Modal from "react-bootstrap/Modal";
+import { usePen } from "./hooks/usePen";
 
 import { HuePicker } from "react-color";
-
 import Sticky from "./sticky";
 import DrawerHeader from "./drawerHeader";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
@@ -31,101 +27,121 @@ import Popover from "react-bootstrap/Popover";
 import CustomPopover from "./popover";
 import CustomStickyPopover from "./customStickyPopover";
 import Pen from "./pen";
-
+import { useText } from "./hooks/useText";
+import { useSticky } from "./hooks/useSticky";
+import { useCircle } from "./hooks/useCircle";
+import { useRectangle } from "./hooks/useRectangle";
+import { useImage } from "./hooks/useImage";
+import { useArrow } from "./hooks/useArrow";
+// import { handleClear } from "./Function/handleClear";
+// import { handleColorChange } from "./Function/handleColorChange";
 const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
-  const [isOpen, setIsOpen] = useState(false);
-  const [lines, setLines] = useState([]);
-  const [circles, setCircles] = useState([]);
-  const [texts, setTexts] = useState([]);
-  const [rectangles, setRectangles] = useState([]);
-
-  const [arrows, setArrows] = useState([]);
-
   const [draw, setDraw] = useState([]);
-  const [inputtext, setInutText] = useState();
-  const [notes, setNotes] = useState([]);
-  const [stickyShow, setStickyShow] = useState(false);
+
   // Redo hooks
-  const [linesRedoHistory, setLinesRedoHistory] = useState([]);
-  const [circlesRedoHistory, setCirclesRedoHistory] = useState([]);
-  const [textsRedoHistory, setTextsRedoHistory] = useState([]);
-  const [rectanglesRedoHistory, setRectanglesRedoHistory] = useState([]);
-  const [arrowsRedoHistory, setArrowsRedoHistory] = useState([]);
-  const [imagesRedoHistory, setImagesRedoHistory] = useState([]);
+
   // These hooks for arrow points
-  const [startX, setStartX] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [endX, setEndX] = useState(0);
-  const [endY, setEndY] = useState(0);
 
   const [selectedTool, setSelectedTool] = useState("");
   // hooks for different tool  color
-  const [selectedColor, setSelectedColor] = useState("#0055ff");
-  const [brushColor, setBrushColor] = useState("#000000");
-  const [lineColor, setLineColor] = useState("#000000");
-  const [line1Color, setLine1Color] = useState("#000000");
-  const [line2Color, setLine2Color] = useState("#000000");
-  const [rectangleColor, setRectangleColor] = useState("#000000");
-  const [circleColor, setCircleColor] = useState("#000000");
-  const [arrowColor, setArrowColor] = useState("#000000");
+
+  // const [lineColor, setLineColor] = useState("#000000");
+  const {
+    lineColor,
+    line1Color,
+    line2Color,
+    setLineColor,
+    setLine1Color,
+    setLine2Color,
+    lineRef,
+    lineRef2,
+    lineRef3,
+    lines,
+    setLines,
+    linesRedoHistory,
+    setLinesRedoHistory,
+    brushRef,
+    eraserRef,
+    selectedColor,
+    setSelectedColor,
+    brushColor,
+    setBrushColor,
+  } = usePen();
+  const { notes, setNotes, stickyShow, setStickyShow } = useSticky();
+  const {
+    inputtext,
+    setInutText,
+    texts,
+    textsRedoHistory,
+    setTextsRedoHistory,
+    setTexts,
+    newTextPosition,
+    setNewTextPosition,
+    newText,
+    setNewText,
+    isAddingText,
+    setIsAddingText,
+    handleInput,
+    handleInputKeyDown,
+    addNewText,
+  } = useText();
+  const {
+    circles,
+    setCircles,
+    circlesRedoHistory,
+    setCirclesRedoHistory,
+    circleColor,
+    setCircleColor,
+  } = useCircle();
+  const {
+    rectangleColor,
+    setRectangleColor,
+    rectangles,
+    setRectangles,
+    rectanglesRedoHistory,
+    setRectanglesRedoHistory,
+  } = useRectangle();
+  const {
+    images,
+    setImages,
+    imagesRedoHistory,
+    setImagesRedoHistory,
+    handleDragEnd,
+    handleImageUpload,
+    handleResize,
+  } = useImage();
+  const {
+    arrows,
+    setArrows,
+    startX,
+    setStartX,
+    startY,
+    setStartY,
+    endX,
+    setEndX,
+    endY,
+    setEndY,
+    arrowsRedoHistory,
+    setArrowsRedoHistory,
+    arrowColor,
+    setArrowColor,
+  } = useArrow();
+
   const [scale, setScale] = useState(1);
 
   const isDrawing = useRef(false);
 
-  const lineRef = useRef();
-  const lineRef2 = useRef();
-  const lineRef3 = useRef(); // Ref to keep track of current lines
-  const brushRef = useRef();
-  const eraserRef = useRef();
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   // iamges
-  const [images, setImages] = useState([]);
+
   const [selectedId, setSelectedId] = useState(null);
 
   const handleSelect = (id) => {
     setSelectedId(id);
   };
 
-  const handleDragEnd = (id, x, y) => {
-    const updatedImages = images.map((image) =>
-      image.id === id ? { ...image, x, y } : image
-    );
-    setImages(updatedImages);
-  };
 
-  const handleResize = (id, width, height) => {
-    const updatedImages = images.map((image) =>
-      image.id === id ? { ...image, width, height } : image
-    );
-    setImages(updatedImages);
-  };
-
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-
-    reader.onload = (e) => {
-      const image = new window.Image();
-      image.src = e.target.result;
-      image.onload = () => {
-        const newImage = {
-          id: Date.now(), // Unique identifier for the image
-          src: image,
-          x: 0,
-          y: 0,
-          width: image.width,
-          height: image.height,
-        };
-        setImages([...images, newImage]);
-      };
-    };
-
-    reader.readAsDataURL(file);
-  };
   // popover elements
 
   const popoverSticky = (
@@ -285,6 +301,13 @@ const DrawingArea = () => {
     } else if (selectedTool === "arrow") {
       setStartX(pos.x);
       setStartY(pos.y);
+    } else if (selectedTool === "text") {
+      if (!isAddingText) {
+        setIsAddingText(true);
+        const stage = e.target.getStage();
+        const position = stage.getPointerPosition();
+        setNewTextPosition(position);
+      }
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -405,7 +428,6 @@ const DrawingArea = () => {
   // all types of lines in the array for checking the condition for undo
   const lineTools = ["line", "line2", "line3", "brush"];
 
- 
   const handleUndo = () => {
     if (lineTools.includes(selectedTool) && lines.length > 0) {
       setLines((prevLines) => {
@@ -523,17 +545,7 @@ const DrawingArea = () => {
     setImages([]);
   };
   // savechanges function for inpput text
-  const handleSaveChanges = () => {
-    // Function to handle the "Save Changes" button click in the modal
-    if (inputtext) {
-      alert(inputtext);
-      /// Close the modal
-      setSelectedTool("text");
-      setTexts([...texts, { x: 100, y: 100, text: inputtext, fontSize: 16 }]);
-      setInutText();
-      setShow(false);
-    }
-  };
+
   // color for different tools with diffeent color options
   const handleColorChange = (color) => {
     // Update the selected color state
@@ -566,6 +578,7 @@ const DrawingArea = () => {
         break;
     }
   };
+  // handleColorChange(selectedTool)
   // Function for circle move
   const handleCircleDragMove = (e, i) => {
     const updatedCircles = [...circles];
@@ -707,15 +720,15 @@ const DrawingArea = () => {
                   <BsPencil size={20} color="red" />
                 </div>
               </OverlayTrigger>
-               {/* stickynotes */}
-               <OverlayTrigger
+              {/* stickynotes */}
+              <OverlayTrigger
                 trigger="click"
                 placement="right"
-                overlay={CustomStickyPopover({  setSelectedColor })}
+                overlay={CustomStickyPopover({ setSelectedColor })}
                 rootClose={true}
               >
                 <div
-                  onClick={() => handleAddNote(200,300)}
+                  onClick={() => handleAddNote(200, 300)}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
@@ -748,7 +761,6 @@ const DrawingArea = () => {
               >
                 <BsStickyFill />
               </div>
-             
 
               <div
                 onClick={() => setSelectedTool("rectangle")}
@@ -765,7 +777,10 @@ const DrawingArea = () => {
                 <BsFileArrowUp size={20} />
               </div>
 
-              <div onClick={() => handleShow()} style={{ padding: "12px" }}>
+              <div
+                onClick={() => setSelectedTool("text")}
+                style={{ padding: "12px" }}
+              >
                 <BiText color="black" size={20} />
               </div>
 
@@ -854,27 +869,7 @@ const DrawingArea = () => {
                   }
                 />
               ))}
-              {/* {selectedTool === 'line'  && <Pen lines={lines}/>} */}
-              {/* {selectedTool === 'line'  && lines.map((line, i) => (
-          <Pen
-            key={i}
-            line={line.line}
-            line2={line.line2}
-            line3={line.line3}
-            ref={
-              line.line
-                ? line.ref
-                : line.line2
-                ? lineRef2.current
-                : line.line3
-                ? lineRef3.current
-                : null
-            }
-            points={line.points}
-            color={line.color}
-            strokeWidth={line.line ? 2 : line.line2 ? 10 : line.line3 ? 20 : 80}
-          />
-        ))} */}
+
               {circles.map((circle, i) => (
                 <Circle
                   key={i}
@@ -902,7 +897,7 @@ const DrawingArea = () => {
                   onDragMove={(e) => handleRectangleDragMove(e, i)}
                 />
               ))}
-             
+
               {texts.map((text, i) => (
                 <Text
                   key={i}
@@ -936,7 +931,6 @@ const DrawingArea = () => {
                 />
               ))}
 
-           
               {images.length > 0 &&
                 images.map((image) => (
                   <ImageUpload
@@ -954,29 +948,20 @@ const DrawingArea = () => {
           </Stage>
         </div>
       </div>
-      {/* Modal code for text input */}
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Enter the text:</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <input
-            type="text"
-            className="form-control"
-            value={inputtext}
-            onChange={(e) => setInutText(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            style={{ width: "auto" }}
-            variant="primary"
-            onClick={handleSaveChanges}
-          >
-            Saves
-          </Button>
-        </Modal.Footer>
-      </Modal>
+
+      {isAddingText && (
+        <input
+          type="text"
+          value={newText}
+          onChange={handleInput}
+          onKeyDown={handleInputKeyDown}
+          style={{
+            position: "fixed",
+            top: newTextPosition.y,
+            left: newTextPosition.x,
+          }}
+        />
+      )}
     </>
   );
 };
