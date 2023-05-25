@@ -39,6 +39,8 @@ const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
   const [draw, setDraw] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  
 
   // Redo hooks
 
@@ -130,6 +132,10 @@ const DrawingArea = () => {
   } = useArrow();
 
   const [scale, setScale] = useState(1);
+  const [cardTransform,setCardTransform]=useState(false)
+  const handleCardTransform=()=>{
+    setCardTransform(!cardTransform)
+  }
 
   const isDrawing = useRef(false);
 
@@ -621,6 +627,9 @@ const DrawingArea = () => {
 
   // sticky notes
   const [inputText, setInputText] = useState("");
+  const handleNoteSelect = (index) => {
+    setSelectedIndex(index)
+  }
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
@@ -646,6 +655,7 @@ const DrawingArea = () => {
     const updatedNotes = [...notes];
     updatedNotes[index].text = newText;
     setNotes(updatedNotes);
+
   };
   // For delete the sticky notes
   const handleNoteDelete = (index) => {
@@ -921,6 +931,10 @@ const DrawingArea = () => {
                     updatedNotes[index].y = event.target.y();
                     setNotes(updatedNotes);
                   }}
+                  // isSelected={true}
+                  isSelected={index===selectedIndex} // Set isSelected to true for the specific index
+          onSelect={() => handleNoteSelect(index)}
+                 
                   onChange={() => {
                     const newText = prompt("Enter new text:");
                     if (newText) {

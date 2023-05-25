@@ -2,7 +2,7 @@ import React from 'react';
 import { Popover } from 'react-bootstrap';
 import { BsFillStickyFill } from 'react-icons/bs';
 
-const CustomStickyPopover = ({ setSelectedColor}) => {
+const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
   return (
     <Popover id="popover-basic">
       <Popover.Body>
@@ -42,24 +42,15 @@ const CustomStickyPopover = ({ setSelectedColor}) => {
             }}
           ></div>
         </div>
-        <div
-         
-          style={{ padding: "12px" }}
-        >
+        <div onClick={() => handleAddNote(200, 200)} style={{ padding: "12px" }}>
           <BsFillStickyFill size={20} color="red" />
         </div>
 
-        <div
-         
-          style={{ padding: "12px" }}
-        >
+        <div onClick={() => handleAddNote(300, 200)} style={{ padding: "12px" }}>
           <BsFillStickyFill size={20} color="red" />
         </div>
 
-        <div
-         
-          style={{ padding: "12px" }}
-        >
+        <div onClick={() => handleAddNote(400, 400)} style={{ padding: "12px" }}>
           <BsFillStickyFill size={40} color="red" />
         </div>
       </Popover.Body>
