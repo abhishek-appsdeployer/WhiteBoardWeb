@@ -1,26 +1,25 @@
-import React from 'react'
-import Home from './components/Home/Home'
-import Login from './components/Login/Login'
-import Signup from './components/Signup/Signup'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Emailverify from './components/Signup/Emailverify';
-import Dashboard from './components/Dashboard/Dashboard';
+import React from "react";
+import Home from "./components/home/home";
+import Login from "./components/login/login";
+import Signup from "./components/signup/signup";
+import { Routes, Route, HashRouter } from "react-router-dom";
+import Emailverify from "./components/signup/emailVerify";
+import Dashboard from "./components/dashboard/dashboard";
+import DrawingArea from "./components/draw/drawingArea";
 
 const App = () => {
   return (
-    <BrowserRouter>
-    <Routes>
-    
-    <Route path='/' element={<Home/>}/>
+    <HashRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="signup" element={<Signup />} />
         <Route path="email" element={<Emailverify />} />
         <Route path="dashboard" element={<Dashboard />} />
-       
-      
-    </Routes>
-  </BrowserRouter>
-  )
-}
+        <Route path="drawing" element={<DrawingArea />} />
+      </Routes>
+    </HashRouter>
+  );
+};
 
-export default App
+export default App;
