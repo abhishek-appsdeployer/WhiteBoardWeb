@@ -42,7 +42,7 @@ const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
             }}
           ></div>
         </div>
-        <div onClick={() => handleAddNote(200, 200)} style={{ padding: "12px" }}>
+        {/* <div onClick={() => handleAddNote(200, 200)} style={{ padding: "12px" }}>
           <BsFillStickyFill size={20} color="red" />
         </div>
 
@@ -52,7 +52,7 @@ const CustomStickyPopover = ({ setSelectedColor, handleAddNote }) => {
 
         <div onClick={() => handleAddNote(400, 400)} style={{ padding: "12px" }}>
           <BsFillStickyFill size={40} color="red" />
-        </div>
+        </div> */}
       </Popover.Body>
     </Popover>
   );

@@ -1,6 +1,7 @@
-import React, { useRef ,useState} from "react";
-import { Rect, Text, Group, Transformer } from "react-konva";
 
+import React, { useRef, useState, useEffect } from "react";
+import { Rect, Text, Group, Transformer } from "react-konva";
+import { Html } from 'react-konva-utils';
 const Sticky = ({
   x,
   y,
@@ -13,34 +14,44 @@ const Sticky = ({
   onDelete,
   color,
   isSelected,
+  isText,
   onSelect,
+  onSelectText
 }) => {
   const shapeRef = useRef(null);
   const textRef = useRef(null);
   const deleteButtonRef = useRef(null);
   const trRef = useRef(null);
+  const inputRef = useRef(null);
+
   let timer;
-console.log(isSelected)
-React.useEffect(() => {
-  if (isSelected) {
-    // Attach transformer when the sticky is selected
-    trRef.current.nodes([shapeRef.current, textRef.current, deleteButtonRef.current]);
-    trRef.current.getLayer().batchDraw();
 
-    timer = setTimeout(() => {
-      trRef.current.nodes([]);
-    }, 30000);
-  }
+  useEffect(() => {
+    if (isSelected) {
+      trRef.current.nodes([shapeRef.current, textRef.current, deleteButtonRef.current]);
+      trRef.current.getLayer().batchDraw();
 
-  return () => {
-    if (timer) {
-      clearTimeout(timer);
+      timer = setTimeout(() => {
+        trRef.current.nodes([]);
+      }, 15000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [isSelected]);
+
+  const handleInputChange = () => {
+    if (inputRef.current) {
+      const newText = inputRef.current.value;
+      onChange(newText);
     }
   };
-}, [isSelected]);
 
   return (
-    <React.Fragment>
+    <>
       <Group>
         <Rect
           x={x}
@@ -54,7 +65,6 @@ React.useEffect(() => {
           draggable={draggable}
           onDragEnd={onDragEnd}
           onClick={onSelect}
-          
           ref={shapeRef}
         />
         <Text
@@ -62,6 +72,7 @@ React.useEffect(() => {
           y={y + 10}
           width={width - 20}
           height={height - 20}
+          onClick={onSelectText}
           text={text}
           fontFamily="Calibri"
           fontSize={20}
@@ -71,9 +82,29 @@ React.useEffect(() => {
           fontStyle="bold"
           draggable={draggable}
           onDragEnd={onDragEnd}
-          onDblClick={onChange}
+          // onDblClick={onChange}
           ref={textRef}
         />
+        {isText && (
+          <Html>
+            <input
+              ref={inputRef}
+              value={text}
+              placeholder="DOM input from Konva nodes"
+              style={{
+                position: "absolute",
+                top: y + 10,
+                left: x + 10,
+                width: "100px",
+                height: "60px",
+                fontFamily: "Calibri",
+                fontSize: 20,
+                padding: "5px",
+              }}
+              onChange={handleInputChange}
+            />
+          </Html>
+        )}
         <Group x={x + width - 35} y={y} width={30} height={30} ref={deleteButtonRef}>
           <Rect
             width={30}
@@ -106,7 +137,7 @@ React.useEffect(() => {
           }}
         />
       )}
-    </React.Fragment>
+    </>
   );
 };
 
