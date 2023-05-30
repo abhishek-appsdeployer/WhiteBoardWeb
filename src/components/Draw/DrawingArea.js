@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react";
+import './drawingArea.css'
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
 
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
@@ -23,7 +24,7 @@ import Modal from "react-bootstrap/Modal";
 
 import { HuePicker } from "react-color";
 
-import Sticky from "./sticky";
+import Sticky from "./Sticky";
 import DrawerHeader from "./drawerHeader";
 const DrawingArea = () => {
   const stageRef = useRef(null);
@@ -77,6 +78,17 @@ const DrawingArea = () => {
   // iamges
   const [images, setImages] = useState([]);
   const [selectedId, setSelectedId] = useState(null);
+
+  const [highlighted, setHighlighted] = useState(false);
+  const [drawingMode, setDrawingMode] = useState(true);
+
+  const handleDoneDrawing = () => {
+    setDrawingMode(false);
+  };
+
+  const handleClick = (iconName) => {
+    setHighlighted(iconName);
+  };
 
   const handleSelect = (id) => {
     setSelectedId(id);
@@ -234,7 +246,7 @@ const DrawingArea = () => {
         const radius =
           Math.sqrt(
             Math.pow(point.x - lastCircle.x, 2) +
-              Math.pow(point.y - lastCircle.y, 2)
+            Math.pow(point.y - lastCircle.y, 2)
           ) / 2;
         lastCircle.radius = radius;
         setCircles([...circles]);
@@ -630,53 +642,61 @@ const DrawingArea = () => {
                 gap: "0.2rem",
                 margin: "0.2rem",
                 backgroundColor: "white",
+                outline: "solid gray 1px",
               }}
             >
               <div
                 onClick={() => setSelectedTool("line")}
                 style={{ padding: "12px" }}
               >
-                <BsPencil size={20} color="red" />
+                <BsPencil size={20} color="red" title="Light Pencil Stroke" class={`pen-selection ${highlighted === 'icon1' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon1')} />
               </div>
 
               <div
                 onClick={() => setSelectedTool("line2")}
                 style={{ color: "green", fontWeight: "bold", padding: "12px" }}
               >
-                <BsPencil size={20} color="green" />
+                <BsPencil size={20} color="green" title="Medium Pencil Stroke" class={`pen-selection ${highlighted === 'icon2' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon2')} />
               </div>
 
               <div
                 onClick={() => setSelectedTool("line3")}
                 style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
               >
-                <BsPencil size={20} color="blue" />
+                <BsPencil size={20} color="blue" title="Thick Pencil Stroke" class={`pen-selection ${highlighted === 'icon3' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon3')} />
               </div>
               <div
                 onClick={() => setSelectedTool("eraser")}
                 style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
               >
-                <BsEraser size={20} color="blue" />
+                <BsEraser size={20} color="blue" title="Eraser" class={`pen-selection ${highlighted === 'icon4' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon4')} />
               </div>
 
               <div
                 onClick={() => setSelectedTool("circle")}
                 style={{ padding: "12px" }}
               >
-                <VscCircle size={20} />
+                <VscCircle size={20} title="Circle" class={`pen-selection ${highlighted === 'icon5' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon5')} />
               </div>
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
                 style={{ padding: "12px" }}
               >
-                <BiBrush size={20} />
+                <BiBrush size={20} title="Brush" class={`pen-selection ${highlighted === 'icon6' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon6')} />
               </div>
               <div
                 style={{ padding: "12px" }}
                 onClick={() => setStickyShow(!stickyShow)}
               >
-                <BsStickyFill />
+                <BsStickyFill title="Sticky Fill" class={`pen-selection ${highlighted === 'icon7' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon7')} />
               </div>
 
               <div
@@ -684,43 +704,52 @@ const DrawingArea = () => {
                 style={{ padding: "12px" }}
               >
                 {" "}
-                <BiRectangle size={20} />
+                <BiRectangle size={20} title="Rectangle" class={`pen-selection ${highlighted === 'icon8' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon8')} />
               </div>
               <div
                 onClick={() => setSelectedTool("arrow")}
                 style={{ padding: "12px" }}
               >
                 {" "}
-                <BsFileArrowUp size={20} />
+                <BsFileArrowUp size={20} title="Arrow" class={`pen-selection ${highlighted === 'icon9' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon9')} />
               </div>
 
               <div onClick={() => handleShow()} style={{ padding: "12px" }}>
-                <BiText color="black" size={20} />
+                <BiText color="black" size={20} title="Text" class={`pen-selection ${highlighted === 'icon10' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon10')} />
               </div>
 
               <div onClick={handleUndo} style={{ padding: "12px" }}>
                 {" "}
-                <FaUndoAlt color="black" size={20} />
+                <FaUndoAlt color="black" size={20} title="Undo" class={`pen-selection ${highlighted === 'icon11' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon11')} />
               </div>
               <div onClick={handleRedo} style={{ padding: "12px" }}>
                 {" "}
-                <FaRedo color="black" size={20} />
+                <FaRedo color="black" size={20} title="Redo" class={`pen-selection ${highlighted === 'icon12' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon12')} />
               </div>
               <div onClick={handleClear} style={{ padding: "12px" }}>
                 {" "}
-                <BsTrashFill size={20} />
+                <BsTrashFill size={20} title="Trash" class={`pen-selection ${highlighted === 'icon13' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon13')} />
               </div>
               <div onClick={handleExport} style={{ padding: "12px" }}>
                 {" "}
-                <BsDownload size={20} />
+                <BsDownload size={20} title="Download" class={`pen-selection ${highlighted === 'icon14' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon14')} />
               </div>
               <div onClick={handleZoomIn} style={{ padding: "12px" }}>
                 {" "}
-                <BsZoomIn size={20} />
+                <BsZoomIn size={20} title="Zoom In" class={`pen-selection ${highlighted === 'icon15' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon15')} />
               </div>
               <div onClick={handleZoomOut} style={{ padding: "12px" }}>
                 {" "}
-                <BsZoomOut size={20} />
+                <BsZoomOut size={20} title="Zoom Out" class={`pen-selection ${highlighted === 'icon16' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon16')} />
               </div>
               <div
                 onClick={() => {
@@ -735,8 +764,18 @@ const DrawingArea = () => {
                   style={{ display: "none" }}
                   onChange={handleImageUpload}
                 />{" "}
-                <HiOutlinePhotograph size={20} />
+                <HiOutlinePhotograph size={20} title="Upload Photo" class={`pen-selection ${highlighted === 'icon17' ? 'highlighted' : ''}`}
+                  onClick={() => handleClick('icon17')} />
               </div>
+              {/* <div style={{ padding: "12px" }} class={` ${drawingMode ? 'active' : ''}`} >
+                {drawingMode && (
+                  <button
+                    onClick={handleDoneDrawing}
+                  >
+                    Done Drawing
+                  </button>
+                )}
+              </div> */}
             </div>
           </div>
           {/* code for drawing boards */}
@@ -774,12 +813,12 @@ const DrawingArea = () => {
                     line.line
                       ? line.ref
                       : line.line2
-                      ? lineRef2.current
-                      : line.line3
-                      ? lineRef3.current
-                      : selectedTool === "brush"
-                      ? brushRef.current
-                      : null
+                        ? lineRef2.current
+                        : line.line3
+                          ? lineRef3.current
+                          : selectedTool === "brush"
+                            ? brushRef.current
+                            : null
                   }
                 />
               ))}
