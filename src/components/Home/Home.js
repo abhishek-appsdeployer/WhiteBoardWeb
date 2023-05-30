@@ -5,12 +5,12 @@ const Home = () => {
   return (
     <>
       <div
-        style={{
-          backgroundColor: "gray",
-          height: "100vh",
-          overflow: "hidden",
-        }}
-      >
+  style={{
+    backgroundColor: "gray",
+    height: "100%",
+    overflow: "hidden",
+  }}
+>
         <div
           style={{
             display: "flex",
@@ -18,8 +18,8 @@ const Home = () => {
             gap: "0.5rem",
             flexWrap: "wrap",
             justifyContent: "flex-end",
-            marginRight: "5rem",
-            paddingTop: "5rem",
+            marginRight: "10px",
+            paddingTop: "10px",
           }}
         >
           <Link
@@ -30,14 +30,14 @@ const Home = () => {
               fontSize: "20px",
               fontWeight: "bold",
               width: "fit-content",
-              marginRight: "1rem",
+              marginRight: "5px",
             }}
           >
             <p
               style={{
                 border: "1px solid #343a40",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.25rem",
+                padding: "5px 10px",
+                borderRadius: "10px",
               }}
             >
               Sign in
@@ -51,14 +51,14 @@ const Home = () => {
               fontSize: "20px",
               fontWeight: "bold",
               width: "fit-content",
-              marginRight: "1rem",
+              marginRight: "5px",
             }}
           >
             <p
               style={{
                 border: "1px solid #343a40",
-                padding: "0.5rem 1rem",
-                borderRadius: "0.25rem",
+                padding: "5px 10px",
+                borderRadius: "10px",
               }}
             >
               Signup

@@ -911,7 +911,7 @@ const DrawingArea = () => {
                 <Sticky
                   key={index}
                   {...note}
-                  onDragEnd={(event) => {
+                  handleDragEnd={(event) => {
                     const updatedNotes = [...notes];
                     updatedNotes[index].x = event.target.x();
                     updatedNotes[index].y = event.target.y();
@@ -920,7 +920,7 @@ const DrawingArea = () => {
                   // isSelected={true}
                   isSelected={index === selectedIndex}
                   isText={index===selectedTextIndex} // Set isSelected to true for the specific index
-                  onSelect={() => handleNoteSelect(index)}
+                  handleSelect ={() => handleNoteSelect(index)}
                   onSelectText={() => handleNoteSelectText(index)}
                   onChange={(newText) => handleNoteChange(index, newText)}
                   onDelete={() => handleNoteDelete(index)}

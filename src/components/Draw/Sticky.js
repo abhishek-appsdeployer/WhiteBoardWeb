@@ -1,7 +1,6 @@
-
 import React, { useRef, useState, useEffect } from "react";
 import { Rect, Text, Group, Transformer } from "react-konva";
-import { Html } from 'react-konva-utils';
+import { Html } from "react-konva-utils";
 const Sticky = ({
   x,
   y,
@@ -9,30 +8,34 @@ const Sticky = ({
   height,
   text,
   draggable,
-  onDragEnd,
+  handleDragEnd,
   onChange,
   onDelete,
   color,
   isSelected,
   isText,
-  onSelect,
-  onSelectText
+  handleSelect ,
+  onSelectText,
 }) => {
   const shapeRef = useRef(null);
   const textRef = useRef(null);
   const deleteButtonRef = useRef(null);
-  const trRef = useRef(null);
+  const transformStickyRef = useRef(null);
   const inputRef = useRef(null);
 
   let timer;
 
   useEffect(() => {
     if (isSelected) {
-      trRef.current.nodes([shapeRef.current, textRef.current, deleteButtonRef.current]);
-      trRef.current.getLayer().batchDraw();
+      transformStickyRef.current.nodes([
+        shapeRef.current,
+        textRef.current,
+        deleteButtonRef.current,
+      ]);
+      transformStickyRef.current.getLayer().batchDraw();
 
       timer = setTimeout(() => {
-        trRef.current.nodes([]);
+        transformStickyRef.current.nodes([]);
       }, 15000);
     }
 
@@ -45,8 +48,7 @@ const Sticky = ({
 
   const handleInputChange = () => {
     if (inputRef.current) {
-      const newText = inputRef.current.value;
-      onChange(newText);
+      onChange(inputRef.current.value);
     }
   };
 
@@ -63,8 +65,8 @@ const Sticky = ({
           strokeWidth={4}
           cornerRadius={10}
           draggable={draggable}
-          onDragEnd={onDragEnd}
-          onClick={onSelect}
+          onDragEnd={handleDragEnd}
+          onClick={handleSelect }
           ref={shapeRef}
         />
         <Text
@@ -81,7 +83,7 @@ const Sticky = ({
           align="center"
           fontStyle="bold"
           draggable={draggable}
-          onDragEnd={onDragEnd}
+          onDragEnd={handleDragEnd}
           // onDblClick={onChange}
           ref={textRef}
         />
@@ -105,7 +107,13 @@ const Sticky = ({
             />
           </Html>
         )}
-        <Group x={x + width - 35} y={y} width={30} height={30} ref={deleteButtonRef}>
+        <Group
+          x={x + width - 35}
+          y={y}
+          width={30}
+          height={30}
+          ref={deleteButtonRef}
+        >
           <Rect
             width={30}
             height={30}
@@ -127,7 +135,7 @@ const Sticky = ({
       </Group>
       {isSelected && (
         <Transformer
-          ref={trRef}
+          ref={transformStickyRef}
           boundBoxFunc={(oldBox, newBox) => {
             // Limit minimum size of the sticky
             if (newBox.width < 50 || newBox.height < 50) {
