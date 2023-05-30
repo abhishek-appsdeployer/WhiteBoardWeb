@@ -1,7 +1,6 @@
-import React from "react";
-import { Rect, Text,  Group } from "react-konva";
-
-// sticky components
+import React, { useRef, useState, useEffect } from "react";
+import { Rect, Text, Group, Transformer } from "react-konva";
+import { Html } from "react-konva-utils";
 const Sticky = ({
   x,
   y,
@@ -9,118 +8,145 @@ const Sticky = ({
   height,
   text,
   draggable,
-  onDragEnd,
+  handleDragEnd,
   onChange,
   onDelete,
+  color,
+  isSelected,
+  isText,
+  handleSelect ,
+  onSelectText,
 }) => {
+  const shapeRef = useRef(null);
+  const textRef = useRef(null);
+  const deleteButtonRef = useRef(null);
+  const transformStickyRef = useRef(null);
+  const inputRef = useRef(null);
+
+  let timer;
+
+  useEffect(() => {
+    if (isSelected) {
+      transformStickyRef.current.nodes([
+        shapeRef.current,
+        textRef.current,
+        deleteButtonRef.current,
+      ]);
+      transformStickyRef.current.getLayer().batchDraw();
+
+      timer = setTimeout(() => {
+        transformStickyRef.current.nodes([]);
+      }, 15000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [isSelected]);
+
+  const handleInputChange = () => {
+    if (inputRef.current) {
+      onChange(inputRef.current.value);
+    }
+  };
+
   return (
-    <Group>
-      <Rect
-        x={x}
-        y={y}
-        width={width}
-        height={height}
-        fill="#ffffcc"
-        stroke="#999966"
-        strokeWidth={4}
-        cornerRadius={10}
-        draggable={draggable}
-        onDragEnd={onDragEnd}
-      />
-      <Text
-        x={x + 10}
-        y={y + 10}
-        width={width - 20}
-        height={height - 20}
-        text={text}
-        fontFamily="Calibri"
-        fontSize={20}
-        fill="#333333"
-        verticalAlign="middle"
-        align="center"
-        fontStyle="bold"
-        draggable={draggable}
-        onDragEnd={onDragEnd}
-        onDblClick={onChange}
-      />
-      <Group x={x + width - 35} y={y} width={30} height={30}>
+    <>
+      <Group>
         <Rect
-          width={30}
-          height={30}
-          fill="red"
-          cornerRadius={15}
-          onClick={onDelete}
+          x={x}
+          y={y}
+          width={width}
+          height={height}
+          fill={color}
+          stroke="#999966"
+          strokeWidth={4}
+          cornerRadius={10}
+          draggable={draggable}
+          onDragEnd={handleDragEnd}
+          onClick={handleSelect }
+          ref={shapeRef}
         />
         <Text
-          x={10}
-          y={5}
-          text="-"
-          fontFamily="FontAwesome"
+          x={x + 10}
+          y={y + 10}
+          width={width - 20}
+          height={height - 20}
+          onClick={onSelectText}
+          text={text}
+          fontFamily="Calibri"
           fontSize={20}
-          fill="white"
+          fill="#333333"
           verticalAlign="middle"
           align="center"
+          fontStyle="bold"
+          draggable={draggable}
+          onDragEnd={handleDragEnd}
+          // onDblClick={onChange}
+          ref={textRef}
         />
+        {isText && (
+          <Html>
+            <input
+              ref={inputRef}
+              value={text}
+              placeholder="DOM input from Konva nodes"
+              style={{
+                position: "absolute",
+                top: y + 10,
+                left: x + 10,
+                width: "100px",
+                height: "60px",
+                fontFamily: "Calibri",
+                fontSize: 20,
+                padding: "5px",
+              }}
+              onChange={handleInputChange}
+            />
+          </Html>
+        )}
+        <Group
+          x={x + width - 35}
+          y={y}
+          width={30}
+          height={30}
+          ref={deleteButtonRef}
+        >
+          <Rect
+            width={30}
+            height={30}
+            fill="red"
+            cornerRadius={15}
+            onClick={onDelete}
+          />
+          <Text
+            x={10}
+            y={5}
+            text="-"
+            fontFamily="FontAwesome"
+            fontSize={20}
+            fill="white"
+            verticalAlign="middle"
+            align="center"
+          />
+        </Group>
       </Group>
-    </Group>
+      {isSelected && (
+        <Transformer
+          ref={transformStickyRef}
+          boundBoxFunc={(oldBox, newBox) => {
+            // Limit minimum size of the sticky
+            if (newBox.width < 50 || newBox.height < 50) {
+              return oldBox;
+            }
+            return newBox;
+          }}
+        />
+      )}
+    </>
   );
 };
 
 export default Sticky;
-
-// const StickyNote = () => {
-//   const [notes, setNotes] = useState([
-//     { x: 50, y: 50, width: 200, height: 200, text: "Note 1", draggable: true },
-//     { x: 300, y: 50, width: 200, height: 200, text: "Note 2", draggable: true },
-//     { x: 550, y: 50, width: 200, height: 200, text: "Note 3", draggable: true },
-//   ]);
-
-//   const [inputText, setInputText] = useState("");
-
-//   const handleInputChange = (event) => {
-//     setInputText(event.target.value);
-//   };
-
-//   const handleAddNote = () => {
-//     setNotes([
-//       ...notes,
-//       { x: 200, y:200, width: 200, height: 200, text: inputText, draggable: true },
-//     ]);
-//     setInputText("");
-//   };
-
-//   const handleNoteChange = (index, newText) => {
-//     const updatedNotes = [...notes];
-//     updatedNotes[index].text = newText;
-//     setNotes(updatedNotes);
-//   };
-
-//   return (
-//     <div className="App">
-//       <input value={inputText} onChange={handleInputChange} />
-//       <button onClick={handleAddNote}>Add Note</button>
-//       <Stage width={window.innerWidth} height={window.innerHeight}>
-//         <Layer>
-//           {notes.map((note, index) => (
-//             <Sticky
-//               key={index}
-//               {...note}
-//               onDragEnd={(event) => {
-//                 const updatedNotes = [...notes];
-//                 updatedNotes[index].x = event.target.x();
-//                 updatedNotes[index].y = event.target.y();
-//                 setNotes(updatedNotes);
-//               }}
-//               onChange={() => {
-//                 const newText = prompt("Enter new text:");
-//                 if (newText) {
-//                   handleNoteChange(index, newText);
-//                 }
-//               }}
-//             />
-//           ))}
-//         </Layer>
-//       </Stage>
-//     </div>
-//   );
-// };
