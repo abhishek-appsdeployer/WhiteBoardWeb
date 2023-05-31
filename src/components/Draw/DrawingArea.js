@@ -39,6 +39,7 @@ const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
   const [draw, setDraw] = useState([]);
+  const [shape, setShape] = useState("Rectangle");
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [selectedTextIndex, setSelectedTextIndex] = useState(null);
 
@@ -188,11 +189,6 @@ const DrawingArea = () => {
             }}
           ></div>
         </div>
-       
-
-        
-
-        
       </Popover.Body>
     </Popover>
   );
@@ -622,7 +618,7 @@ const DrawingArea = () => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = (w, h) => {
+  const handleAddNote = (w, h, shape) => {
     setNotes([
       ...notes,
       {
@@ -630,6 +626,7 @@ const DrawingArea = () => {
         y: 100,
         width: w,
         height: h,
+        shape: shape,
         text: inputText,
         draggable: true,
         color: selectedColor,
@@ -679,12 +676,6 @@ const DrawingArea = () => {
               }}
             >
               {" "}
-              <label htmlFor="">
-                <input value={inputText} onChange={handleInputChange} />
-              </label>
-              <button style={{ width: "auto" }} onClick={handleAddNote}>
-                Add
-              </button>
             </div>
           ) : null}
         </div>
@@ -720,11 +711,14 @@ const DrawingArea = () => {
               <OverlayTrigger
                 trigger="click"
                 placement="right"
-                overlay={CustomStickyPopover({ setSelectedColor })}
+                overlay={CustomStickyPopover({
+                  setSelectedColor,
+                  handleAddNote,
+                })}
                 rootClose={true}
               >
                 <div
-                  onClick={() => handleAddNote(200, 300)}
+                  // onClick={() => handleAddNote(200, 300,shape)}
                   style={{ padding: "12px" }}
                 >
                   <BsStickyFill />
@@ -917,10 +911,11 @@ const DrawingArea = () => {
                     updatedNotes[index].y = event.target.y();
                     setNotes(updatedNotes);
                   }}
+                  shape={note.shape} // Pass the shape as a prop
                   // isSelected={true}
                   isSelected={index === selectedIndex}
-                  isText={index===selectedTextIndex} // Set isSelected to true for the specific index
-                  handleSelect ={() => handleNoteSelect(index)}
+                  isText={index === selectedTextIndex} // Set isSelected to true for the specific index
+                  handleSelect={() => handleNoteSelect(index)}
                   onSelectText={() => handleNoteSelectText(index)}
                   onChange={(newText) => handleNoteChange(index, newText)}
                   onDelete={() => handleNoteDelete(index)}
