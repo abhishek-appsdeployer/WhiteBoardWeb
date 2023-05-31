@@ -1,6 +1,8 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Rect, Text, Group, Transformer } from "react-konva";
+import { Rect, Text, Group, Transformer, Circle } from "react-konva";
 import { Html } from "react-konva-utils";
+import { EditableText } from "./EditableText";
+
 const Sticky = ({
   x,
   y,
@@ -14,7 +16,8 @@ const Sticky = ({
   color,
   isSelected,
   isText,
-  handleSelect ,
+  handleSelect,
+  shape,
   onSelectText,
 }) => {
   const shapeRef = useRef(null);
@@ -22,6 +25,7 @@ const Sticky = ({
   const deleteButtonRef = useRef(null);
   const transformStickyRef = useRef(null);
   const inputRef = useRef(null);
+  const [editingText, setEditingText] = useState(true);
 
   let timer;
 
@@ -46,29 +50,56 @@ const Sticky = ({
     };
   }, [isSelected]);
 
-  const handleInputChange = () => {
-    if (inputRef.current) {
-      onChange(inputRef.current.value);
-    }
-  };
-
   return (
     <>
       <Group>
-        <Rect
-          x={x}
-          y={y}
-          width={width}
-          height={height}
-          fill={color}
-          stroke="#999966"
-          strokeWidth={4}
-          cornerRadius={10}
-          draggable={draggable}
-          onDragEnd={handleDragEnd}
-          onClick={handleSelect }
-          ref={shapeRef}
-        />
+        {shape === "Rectangle" && (
+          <Rect
+            x={x}
+            y={y}
+            width={width}
+            height={height}
+            fill={color}
+            stroke="#999966"
+            strokeWidth={4}
+            cornerRadius={10}
+            draggable={draggable}
+            onDragEnd={handleDragEnd}
+            onClick={handleSelect}
+            ref={shapeRef}
+          />
+        )}
+        {shape === "circle" && (
+          <Circle
+            x={x + width / 2} // Set the x-coordinate to the center of the circle
+            y={y + height / 2} // Set the y-coordinate to the center of the circle
+            radius={width / 2} // Set the radius of the circle
+            fill={color}
+            stroke="#999966"
+            strokeWidth={4}
+            draggable={draggable}
+            onDragEnd={handleDragEnd}
+            onClick={handleSelect}
+            ref={shapeRef}
+          />
+        )}
+
+        {shape === "square" && (
+          <Rect
+            x={x}
+            y={y}
+            width={width}
+            height={width}
+            fill={color}
+            stroke="#999966"
+            strokeWidth={4}
+            cornerRadius={10}
+            draggable={draggable}
+            onDragEnd={handleDragEnd}
+            onClick={handleSelect}
+            ref={shapeRef}
+          />
+        )}
         <Text
           x={x + 10}
           y={y + 10}
@@ -87,7 +118,7 @@ const Sticky = ({
           // onDblClick={onChange}
           ref={textRef}
         />
-        {isText && (
+        {/* {isText && (
           <Html>
             <input
               ref={inputRef}
@@ -104,9 +135,24 @@ const Sticky = ({
                 padding: "5px",
               }}
               onChange={handleInputChange}
+              
             />
           </Html>
+        )} */}
+        {isText && (
+          <EditableText
+            ref={inputRef}
+            x={x + 8}
+            y={y + 8}
+            // text={text}
+            width={width}
+            height={height}
+            isEditing={isText}
+            onChange={onChange}
+            // onKeyDown={()=>setEditingText(false)}
+          />
         )}
+
         <Group
           x={x + width - 35}
           y={y}

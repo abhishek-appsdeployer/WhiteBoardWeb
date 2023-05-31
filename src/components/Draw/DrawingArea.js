@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
-import './drawingArea.css'
 import { Stage, Layer, Line, Circle, Text, Rect, Arrow } from "react-konva";
-
 import { BiText, BiRectangle, BiBrush } from "react-icons/bi";
 import ImageUpload from "./imageUpload";
+
 import {
   BsPencil,
   BsStickyFill,
@@ -13,123 +12,187 @@ import {
   BsDownload,
   BsZoomIn,
   BsZoomOut,
+  BsFillStickyFill,
 } from "react-icons/bs";
 import { FaRedo, FaUndoAlt } from "react-icons/fa";
 import { HiOutlinePhotograph } from "react-icons/hi";
 import { VscCircle } from "react-icons/vsc";
-
-import { Button } from "react-bootstrap";
-
-import Modal from "react-bootstrap/Modal";
+import { usePen } from "./hooks/usePen";
 
 import { HuePicker } from "react-color";
-
-import Sticky from "./Sticky";
+import Sticky from "./sticky";
 import DrawerHeader from "./drawerHeader";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import CustomPopover from "./popover";
+import CustomStickyPopover from "./customStickyPopover";
+import Pen from "./pen";
+import { useText } from "./hooks/useText";
+import { useSticky } from "./hooks/useSticky";
+import { useCircle } from "./hooks/useCircle";
+import { useRectangle } from "./hooks/useRectangle";
+import { useImage } from "./hooks/useImage";
+import { useArrow } from "./hooks/useArrow";
+// import { handleClear } from "./Function/handleClear";
+// import { handleColorChange } from "./Function/handleColorChange";
 const DrawingArea = () => {
   const stageRef = useRef(null);
   // hooks for stroing different tools in the array
-  const [lines, setLines] = useState([]);
-  const [circles, setCircles] = useState([]);
-  const [texts, setTexts] = useState([]);
-  const [rectangles, setRectangles] = useState([]);
-
-  const [arrows, setArrows] = useState([]);
-
   const [draw, setDraw] = useState([]);
-  const [inputtext, setInutText] = useState();
-  const [notes, setNotes] = useState([]);
-  const [stickyShow, setStickyShow] = useState(false);
+  const [shape, setShape] = useState("Rectangle");
+  const [selectedIndex, setSelectedIndex] = useState(null);
+  const [selectedTextIndex, setSelectedTextIndex] = useState(null);
+
   // Redo hooks
-  const [linesRedoHistory, setLinesRedoHistory] = useState([]);
-  const [circlesRedoHistory, setCirclesRedoHistory] = useState([]);
-  const [textsRedoHistory, setTextsRedoHistory] = useState([]);
-  const [rectanglesRedoHistory, setRectanglesRedoHistory] = useState([]);
-  const [arrowsRedoHistory, setArrowsRedoHistory] = useState([]);
-  const [imagesRedoHistory, setImagesRedoHistory] = useState([]);
+
   // These hooks for arrow points
-  const [startX, setStartX] = useState(0);
-  const [startY, setStartY] = useState(0);
-  const [endX, setEndX] = useState(0);
-  const [endY, setEndY] = useState(0);
 
   const [selectedTool, setSelectedTool] = useState("");
   // hooks for different tool  color
-  const [selectedColor, setSelectedColor] = useState("#0055ff");
-  const [brushColor, setBrushColor] = useState("#000000");
-  const [lineColor, setLineColor] = useState("#000000");
-  const [line1Color, setLine1Color] = useState("#000000");
-  const [line2Color, setLine2Color] = useState("#000000");
-  const [rectangleColor, setRectangleColor] = useState("#000000");
-  const [circleColor, setCircleColor] = useState("#000000");
-  const [arrowColor, setArrowColor] = useState("#000000");
+
+  // const [lineColor, setLineColor] = useState("#000000");
+  const {
+    lineColor,
+    line1Color,
+    line2Color,
+    setLineColor,
+    setLine1Color,
+    setLine2Color,
+    lineRef,
+    lineRef2,
+    lineRef3,
+    lines,
+    setLines,
+    linesRedoHistory,
+    setLinesRedoHistory,
+    brushRef,
+    eraserRef,
+    selectedColor,
+    setSelectedColor,
+    brushColor,
+    setBrushColor,
+  } = usePen();
+  const { notes, setNotes, stickyShow, setStickyShow } = useSticky();
+  const {
+    inputtext,
+    setInutText,
+    texts,
+    textsRedoHistory,
+    setTextsRedoHistory,
+    setTexts,
+    newTextPosition,
+    setNewTextPosition,
+    newText,
+    setNewText,
+    isAddingText,
+    setIsAddingText,
+    handleInput,
+    handleInputKeyDown,
+    addNewText,
+  } = useText();
+  const {
+    circles,
+    setCircles,
+    circlesRedoHistory,
+    setCirclesRedoHistory,
+    circleColor,
+    setCircleColor,
+  } = useCircle();
+  const {
+    rectangleColor,
+    setRectangleColor,
+    rectangles,
+    setRectangles,
+    rectanglesRedoHistory,
+    setRectanglesRedoHistory,
+  } = useRectangle();
+  const {
+    images,
+    setImages,
+    imagesRedoHistory,
+    setImagesRedoHistory,
+    handleDragEnd,
+    handleImageUpload,
+    handleResize,
+  } = useImage();
+  const {
+    arrows,
+    setArrows,
+    startX,
+    setStartX,
+    startY,
+    setStartY,
+    endX,
+    setEndX,
+    endY,
+    setEndY,
+    arrowsRedoHistory,
+    setArrowsRedoHistory,
+    arrowColor,
+    setArrowColor,
+  } = useArrow();
+
   const [scale, setScale] = useState(1);
+  const [cardTransform, setCardTransform] = useState(false);
+  const handleCardTransform = () => {
+    setCardTransform(!cardTransform);
+  };
 
   const isDrawing = useRef(false);
 
-  const lineRef = useRef();
-  const lineRef2 = useRef();
-  const lineRef3 = useRef(); // Ref to keep track of current lines
-  const brushRef = useRef();
-  const eraserRef = useRef();
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   // iamges
-  const [images, setImages] = useState([]);
+
   const [selectedId, setSelectedId] = useState(null);
-
-  const [highlighted, setHighlighted] = useState(false);
-  const [drawingMode, setDrawingMode] = useState(true);
-
-  const handleDoneDrawing = () => {
-    setDrawingMode(false);
-  };
-
-  const handleClick = (iconName) => {
-    setHighlighted(iconName);
-  };
 
   const handleSelect = (id) => {
     setSelectedId(id);
   };
 
-  const handleDragEnd = (id, x, y) => {
-    const updatedImages = images.map((image) =>
-      image.id === id ? { ...image, x, y } : image
-    );
-    setImages(updatedImages);
-  };
+  // popover elements
 
-  const handleResize = (id, width, height) => {
-    const updatedImages = images.map((image) =>
-      image.id === id ? { ...image, width, height } : image
-    );
-    setImages(updatedImages);
-  };
+  const popoverSticky = (
+    <Popover id="popover-basic">
+      <Popover.Body>
+        <div style={{ display: "flex" }}>
+          <div
+            onClick={() => setSelectedColor("#FF0000")}
+            style={{
+              backgroundColor: "red",
+              borderRadius: "50%",
+              width: "24px",
+              height: "24px",
+              margin: "6px",
+              cursor: "pointer",
+            }}
+          ></div>
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
+          <div
+            onClick={() => setSelectedColor("#00FF00")}
+            style={{
+              backgroundColor: "green",
+              borderRadius: "50%",
+              width: "24px",
+              height: "24px",
+              margin: "6px",
+              cursor: "pointer",
+            }}
+          ></div>
+          <div
+            onClick={() => setSelectedColor("#0000FF")}
+            style={{
+              backgroundColor: "blue",
+              borderRadius: "50%",
+              width: "24px",
+              height: "24px",
+              margin: "6px",
+              cursor: "pointer",
+            }}
+          ></div>
+        </div>
+      </Popover.Body>
+    </Popover>
+  );
 
-    reader.onload = (e) => {
-      const image = new window.Image();
-      image.src = e.target.result;
-      image.onload = () => {
-        const newImage = {
-          id: Date.now(), // Unique identifier for the image
-          src: image,
-          x: 0,
-          y: 0,
-          width: image.width,
-          height: image.height,
-        };
-        setImages([...images, newImage]);
-      };
-    };
-
-    reader.readAsDataURL(file);
-  };
   // fucntion for export the canvas part only
   const handleExport = () => {
     const stage = stageRef.current;
@@ -224,6 +287,13 @@ const DrawingArea = () => {
     } else if (selectedTool === "arrow") {
       setStartX(pos.x);
       setStartY(pos.y);
+    } else if (selectedTool === "text") {
+      if (!isAddingText) {
+        setIsAddingText(true);
+        const stage = e.target.getStage();
+        const position = stage.getPointerPosition();
+        setNewTextPosition(position);
+      }
     }
   };
   // Functions calling when the mouse move on the board for start draawing
@@ -246,7 +316,7 @@ const DrawingArea = () => {
         const radius =
           Math.sqrt(
             Math.pow(point.x - lastCircle.x, 2) +
-            Math.pow(point.y - lastCircle.y, 2)
+              Math.pow(point.y - lastCircle.y, 2)
           ) / 2;
         lastCircle.radius = radius;
         setCircles([...circles]);
@@ -344,19 +414,6 @@ const DrawingArea = () => {
   // all types of lines in the array for checking the condition for undo
   const lineTools = ["line", "line2", "line3", "brush"];
 
-  // const handleUndo = () => {
-  //   if (lineTools.includes(selectedTool)) {
-  //     setLines(lines.slice(0, -1));
-  //   } else if (selectedTool === "circle") {
-  //     setCircles(circles.slice(0, circles.length - 1));
-  //   } else if (selectedTool === "text") {
-  //     setTexts(texts.slice(0, texts.length - 1));
-  //   } else if (selectedTool === "rectangle") {
-  //     setRectangles(rectangles.slice(0, rectangles.length - 1));
-  //   } else if (selectedTool === "arrow") {
-  //     setArrows(arrows.slice(0, arrows.length - 1));
-  //   }
-  // };
   const handleUndo = () => {
     if (lineTools.includes(selectedTool) && lines.length > 0) {
       setLines((prevLines) => {
@@ -474,35 +531,25 @@ const DrawingArea = () => {
     setImages([]);
   };
   // savechanges function for inpput text
-  const handleSaveChanges = () => {
-    // Function to handle the "Save Changes" button click in the modal
-    if (inputtext) {
-      alert(inputtext);
-      /// Close the modal
-      setSelectedTool("text");
-      setTexts([...texts, { x: 100, y: 100, text: inputtext, fontSize: 16 }]);
-      setInutText();
-      setShow(false);
-    }
-  };
+
   // color for different tools with diffeent color options
   const handleColorChange = (color) => {
     // Update the selected color state
     setSelectedColor(color.hex);
-
+    // alert(color)
     // Update the appropriate tool color state based on selected tool
     switch (selectedTool) {
       case "brush":
         setBrushColor(color.hex);
         break;
       case "line":
-        setLineColor(color.hex);
+        setLineColor(color);
         break;
       case "line2":
-        setLine1Color(color.hex);
+        setLine1Color(color.hex || color);
         break;
       case "line3":
-        setLine2Color(color.hex);
+        setLine2Color(color.hex || color);
         break;
       case "rectangle":
         setRectangleColor(color.hex);
@@ -517,6 +564,7 @@ const DrawingArea = () => {
         break;
     }
   };
+  // handleColorChange(selectedTool)
   // Function for circle move
   const handleCircleDragMove = (e, i) => {
     const updatedCircles = [...circles];
@@ -559,21 +607,29 @@ const DrawingArea = () => {
 
   // sticky notes
   const [inputText, setInputText] = useState("");
+  const handleNoteSelect = (index) => {
+    setSelectedIndex(index);
+  };
+  const handleNoteSelectText = (index) => {
+    setSelectedTextIndex(index);
+  };
 
   const handleInputChange = (event) => {
     setInputText(event.target.value);
   };
 
-  const handleAddNote = () => {
+  const handleAddNote = (w, h, shape) => {
     setNotes([
       ...notes,
       {
         x: 100,
         y: 100,
-        width: 300,
-        height: 300,
+        width: w,
+        height: h,
+        shape: shape,
         text: inputText,
         draggable: true,
+        color: selectedColor,
       },
     ]);
     setInputText("");
@@ -620,12 +676,6 @@ const DrawingArea = () => {
               }}
             >
               {" "}
-              <label htmlFor="">
-                <input value={inputText} onChange={handleInputChange} />
-              </label>
-              <button style={{ width: "auto" }} onClick={handleAddNote}>
-                Add
-              </button>
             </div>
           ) : null}
         </div>
@@ -642,61 +692,64 @@ const DrawingArea = () => {
                 gap: "0.2rem",
                 margin: "0.2rem",
                 backgroundColor: "white",
-                outline: "solid gray 1px",
               }}
             >
-              <div
-                onClick={() => setSelectedTool("line")}
-                style={{ padding: "12px" }}
+              <OverlayTrigger
+                trigger="click"
+                placement="right"
+                overlay={CustomPopover({ handleColorChange, setSelectedTool })}
+                rootClose={true}
               >
-                <BsPencil size={20} color="red" title="Light Pencil Stroke" class={`pen-selection ${highlighted === 'icon1' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon1')} />
-              </div>
+                <div
+                  onClick={() => setSelectedTool("line")}
+                  style={{ padding: "12px" }}
+                >
+                  <BsPencil size={20} color="red" />
+                </div>
+              </OverlayTrigger>
+              {/* stickynotes */}
+              <OverlayTrigger
+                trigger="click"
+                placement="right"
+                overlay={CustomStickyPopover({
+                  setSelectedColor,
+                  handleAddNote,
+                })}
+                rootClose={true}
+              >
+                <div
+                  // onClick={() => handleAddNote(200, 300,shape)}
+                  style={{ padding: "12px" }}
+                >
+                  <BsStickyFill />
+                </div>
+              </OverlayTrigger>
 
-              <div
-                onClick={() => setSelectedTool("line2")}
-                style={{ color: "green", fontWeight: "bold", padding: "12px" }}
-              >
-                <BsPencil size={20} color="green" title="Medium Pencil Stroke" class={`pen-selection ${highlighted === 'icon2' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon2')} />
-              </div>
-
-              <div
-                onClick={() => setSelectedTool("line3")}
-                style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
-              >
-                <BsPencil size={20} color="blue" title="Thick Pencil Stroke" class={`pen-selection ${highlighted === 'icon3' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon3')} />
-              </div>
               <div
                 onClick={() => setSelectedTool("eraser")}
                 style={{ color: "blue", fontWeight: "bold", padding: "12px" }}
               >
-                <BsEraser size={20} color="blue" title="Eraser" class={`pen-selection ${highlighted === 'icon4' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon4')} />
+                <BsEraser size={20} color="blue" />
               </div>
 
               <div
                 onClick={() => setSelectedTool("circle")}
                 style={{ padding: "12px" }}
               >
-                <VscCircle size={20} title="Circle" class={`pen-selection ${highlighted === 'icon5' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon5')} />
+                <VscCircle size={20} />
               </div>
               <div
                 variant="light"
                 onClick={() => setSelectedTool("brush")}
                 style={{ padding: "12px" }}
               >
-                <BiBrush size={20} title="Brush" class={`pen-selection ${highlighted === 'icon6' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon6')} />
+                <BiBrush size={20} />
               </div>
               <div
                 style={{ padding: "12px" }}
                 onClick={() => setStickyShow(!stickyShow)}
               >
-                <BsStickyFill title="Sticky Fill" class={`pen-selection ${highlighted === 'icon7' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon7')} />
+                <BsStickyFill />
               </div>
 
               <div
@@ -704,52 +757,46 @@ const DrawingArea = () => {
                 style={{ padding: "12px" }}
               >
                 {" "}
-                <BiRectangle size={20} title="Rectangle" class={`pen-selection ${highlighted === 'icon8' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon8')} />
+                <BiRectangle size={20} />
               </div>
               <div
                 onClick={() => setSelectedTool("arrow")}
                 style={{ padding: "12px" }}
               >
                 {" "}
-                <BsFileArrowUp size={20} title="Arrow" class={`pen-selection ${highlighted === 'icon9' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon9')} />
+                <BsFileArrowUp size={20} />
               </div>
 
-              <div onClick={() => handleShow()} style={{ padding: "12px" }}>
-                <BiText color="black" size={20} title="Text" class={`pen-selection ${highlighted === 'icon10' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon10')} />
+              <div
+                onClick={() => setSelectedTool("text")}
+                style={{ padding: "12px" }}
+              >
+                <BiText color="black" size={20} />
               </div>
 
               <div onClick={handleUndo} style={{ padding: "12px" }}>
                 {" "}
-                <FaUndoAlt color="black" size={20} title="Undo" class={`pen-selection ${highlighted === 'icon11' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon11')} />
+                <FaUndoAlt color="black" size={20} />
               </div>
               <div onClick={handleRedo} style={{ padding: "12px" }}>
                 {" "}
-                <FaRedo color="black" size={20} title="Redo" class={`pen-selection ${highlighted === 'icon12' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon12')} />
+                <FaRedo color="black" size={20} />
               </div>
               <div onClick={handleClear} style={{ padding: "12px" }}>
                 {" "}
-                <BsTrashFill size={20} title="Trash" class={`pen-selection ${highlighted === 'icon13' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon13')} />
+                <BsTrashFill size={20} />
               </div>
               <div onClick={handleExport} style={{ padding: "12px" }}>
                 {" "}
-                <BsDownload size={20} title="Download" class={`pen-selection ${highlighted === 'icon14' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon14')} />
+                <BsDownload size={20} />
               </div>
               <div onClick={handleZoomIn} style={{ padding: "12px" }}>
                 {" "}
-                <BsZoomIn size={20} title="Zoom In" class={`pen-selection ${highlighted === 'icon15' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon15')} />
+                <BsZoomIn size={20} />
               </div>
               <div onClick={handleZoomOut} style={{ padding: "12px" }}>
                 {" "}
-                <BsZoomOut size={20} title="Zoom Out" class={`pen-selection ${highlighted === 'icon16' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon16')} />
+                <BsZoomOut size={20} />
               </div>
               <div
                 onClick={() => {
@@ -764,18 +811,8 @@ const DrawingArea = () => {
                   style={{ display: "none" }}
                   onChange={handleImageUpload}
                 />{" "}
-                <HiOutlinePhotograph size={20} title="Upload Photo" class={`pen-selection ${highlighted === 'icon17' ? 'highlighted' : ''}`}
-                  onClick={() => handleClick('icon17')} />
+                <HiOutlinePhotograph size={20} />
               </div>
-              {/* <div style={{ padding: "12px" }} class={` ${drawingMode ? 'active' : ''}`} >
-                {drawingMode && (
-                  <button
-                    onClick={handleDoneDrawing}
-                  >
-                    Done Drawing
-                  </button>
-                )}
-              </div> */}
             </div>
           </div>
           {/* code for drawing boards */}
@@ -813,15 +850,16 @@ const DrawingArea = () => {
                     line.line
                       ? line.ref
                       : line.line2
-                        ? lineRef2.current
-                        : line.line3
-                          ? lineRef3.current
-                          : selectedTool === "brush"
-                            ? brushRef.current
-                            : null
+                      ? lineRef2.current
+                      : line.line3
+                      ? lineRef3.current
+                      : selectedTool === "brush"
+                      ? brushRef.current
+                      : null
                   }
                 />
               ))}
+
               {circles.map((circle, i) => (
                 <Circle
                   key={i}
@@ -849,6 +887,7 @@ const DrawingArea = () => {
                   onDragMove={(e) => handleRectangleDragMove(e, i)}
                 />
               ))}
+
               {texts.map((text, i) => (
                 <Text
                   key={i}
@@ -866,18 +905,19 @@ const DrawingArea = () => {
                 <Sticky
                   key={index}
                   {...note}
-                  onDragEnd={(event) => {
+                  handleDragEnd={(event) => {
                     const updatedNotes = [...notes];
                     updatedNotes[index].x = event.target.x();
                     updatedNotes[index].y = event.target.y();
                     setNotes(updatedNotes);
                   }}
-                  onChange={() => {
-                    const newText = prompt("Enter new text:");
-                    if (newText) {
-                      handleNoteChange(index, newText);
-                    }
-                  }}
+                  shape={note.shape} // Pass the shape as a prop
+                  // isSelected={true}
+                  isSelected={index === selectedIndex}
+                  isText={index === selectedTextIndex} // Set isSelected to true for the specific index
+                  handleSelect={() => handleNoteSelect(index)}
+                  onSelectText={() => handleNoteSelectText(index)}
+                  onChange={(newText) => handleNoteChange(index, newText)}
                   onDelete={() => handleNoteDelete(index)}
                 />
               ))}
@@ -899,29 +939,20 @@ const DrawingArea = () => {
           </Stage>
         </div>
       </div>
-      {/* Modal code for text input */}
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Enter the text:</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <input
-            type="text"
-            className="form-control"
-            value={inputtext}
-            onChange={(e) => setInutText(e.target.value)}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button
-            style={{ width: "auto" }}
-            variant="primary"
-            onClick={handleSaveChanges}
-          >
-            Saves
-          </Button>
-        </Modal.Footer>
-      </Modal>
+
+      {isAddingText && (
+        <input
+          type="text"
+          value={newText}
+          onChange={handleInput}
+          onKeyDown={handleInputKeyDown}
+          style={{
+            position: "fixed",
+            top: newTextPosition.y,
+            left: newTextPosition.x,
+          }}
+        />
+      )}
     </>
   );
 };
