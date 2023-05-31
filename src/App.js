@@ -1,11 +1,12 @@
 import React from "react";
-import Home from "./components/home/home";
-import Login from "./components/login/login";
-import Signup from "./components/signup/signup";
+import Home from "./components/Home/Home";
+import Login from "./components/Login/Login";
+import Signup from "./components/Signup/Signup";
 import { Routes, Route, HashRouter } from "react-router-dom";
-import Emailverify from "./components/signup/emailVerify";
-import Dashboard from "./components/dashboard/dashboard";
-import DrawingArea from "./components/draw/drawingArea";
+import Emailverify from "./components/Signup/Emailverify";
+import Dashboard from "./components/Dashboard/Dashboard";
+import DrawingArea from "./components/Draw/DrawingArea";
+import Lines from "./components/Draw/line";
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
         <Route path="email" element={<Emailverify />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="drawing" element={<DrawingArea />} />
+        <Route path="line" element={<Lines />} />
       </Routes>
     </HashRouter>
   );

@@ -1,4 +1,4 @@
-import React from "react";
+import { React, useState} from "react";
 import {
   BsCameraVideo,
   BsThreeDots,
@@ -7,9 +7,11 @@ import {
 } from "react-icons/bs";
 import { VscCommentDiscussion } from "react-icons/vsc";
 import { GiAlarmClock } from "react-icons/gi";
+import './drawingArea.css'
 
 const DrawerHeader = () => {
   const shareUrl = window.location.href;
+  const [highlighted, setHighlighted] = useState(false);
 
   const sharePage = async () => {
     try {
@@ -18,7 +20,11 @@ const DrawerHeader = () => {
         text: "Check out this page!",
         url: shareUrl,
       });
-    } catch (error) {}
+    } catch (error) { }
+  };
+
+  const handleClick = (iconName) => {
+    setHighlighted(iconName);
   };
 
   return (
@@ -58,14 +64,22 @@ const DrawerHeader = () => {
           display: "flex",
           gap: "0.5rem",
           alignItems: "center",
+          cursor: "pointer",
+          outline: "solid gray 1px"
         }}
       >
-        <GiAlarmClock size={23} />
-        <VscCommentDiscussion size={23} />
-        <BsCameraVideo size={23} />
-        <BsThreeDots size={23} />
-        <BsEmojiSunglasses size={23} />
-        <BsBell size={23} />
+        <GiAlarmClock size={23} title="Alarm" class={`pen-selection ${highlighted === 'icon1' ? 'highlighted' : ''}`}
+          onClick={() => handleClick('icon1')} />
+        <VscCommentDiscussion size={23} title="Comments" class={`pen-selection ${highlighted === 'icon2' ? 'highlighted' : ''}`}
+          onClick={() => handleClick('icon2')} />
+        <BsCameraVideo size={23} title="Camera" class={`pen-selection ${highlighted === 'icon3' ? 'highlighted' : ''}`}
+          onClick={() => handleClick('icon3')} />
+        <BsThreeDots size={23} title="More" class={`pen-selection ${highlighted === 'icon4' ? 'highlighted' : ''}`}
+          onClick={() => handleClick('icon4')} />
+        <BsEmojiSunglasses size={23} title="Private Mode" class={`pen-selection ${highlighted === 'icon5' ? 'highlighted' : ''}`}
+          onClick={() => handleClick('icon5')} />
+        <BsBell size={23} title="Notifications" class={`pen-selection ${highlighted === 'icon6' ? 'highlighted' : ''}`}
+          onClick={() => handleClick('icon6')} />
       </div>
 
       <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
