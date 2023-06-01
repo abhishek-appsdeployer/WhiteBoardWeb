@@ -150,49 +150,6 @@ const DrawingArea = () => {
 
   // popover elements
 
-  const popoverSticky = (
-    <Popover id="popover-basic">
-      <Popover.Body>
-        <div style={{ display: "flex" }}>
-          <div
-            onClick={() => setSelectedColor("#FF0000")}
-            style={{
-              backgroundColor: "red",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              margin: "6px",
-              cursor: "pointer",
-            }}
-          ></div>
-
-          <div
-            onClick={() => setSelectedColor("#00FF00")}
-            style={{
-              backgroundColor: "green",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              margin: "6px",
-              cursor: "pointer",
-            }}
-          ></div>
-          <div
-            onClick={() => setSelectedColor("#0000FF")}
-            style={{
-              backgroundColor: "blue",
-              borderRadius: "50%",
-              width: "24px",
-              height: "24px",
-              margin: "6px",
-              cursor: "pointer",
-            }}
-          ></div>
-        </div>
-      </Popover.Body>
-    </Popover>
-  );
-
   // fucntion for export the canvas part only
   const handleExport = () => {
     const stage = stageRef.current;
@@ -664,7 +621,7 @@ const DrawingArea = () => {
         <DrawerHeader />
         <div style={{ margin: "20px" }}>
           {/* options of the color */}
-          <HuePicker color={selectedColor} onChange={handleColorChange} />
+          {/* <HuePicker color={selectedColor} onChange={handleColorChange} /> */}
           {stickyShow ? (
             <div
               style={{

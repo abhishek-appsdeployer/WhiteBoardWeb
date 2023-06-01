@@ -26,7 +26,7 @@ export function EditableText({
         y={y+20}
         width={width}
         height={height}
-        // value={text}
+        value={text}
         onChange={onChange}
         // onKeyDown={onKeyDown}
       />

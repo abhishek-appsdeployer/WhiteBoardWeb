@@ -4,38 +4,41 @@ import pen1 from '../../assets/Images/pen1.png';
 import pen2 from '../../assets/Images/pen2.png';
 import pen3 from '../../assets/Images/pen3.jpeg';
 
+const colorMap = {
+  Red: '#FF0000',
+  Green: '#00FF00',
+  Blue: '#0000FF',
+  Yellow: '#FFFF00',
+  Magenta: '#FF00FF',
+  Cyan: '#00FFFF',
+  Orange: '#FFA500',
+  Purple: '#800080',
+  'Dark Green': '#008000',
+};
+
 const CustomPopover = ({ handleColorChange, setSelectedTool }) => {
-  const colors = [
-    '#FF0000', // Red
-    '#00FF00', // Green
-    '#0000FF', // Blue
-    '#FFFF00', // Yellow
-    '#FF00FF', // Magenta
-    '#00FFFF', // Cyan
-    '#FFA500', // Orange
-    '#800080', // Purple
-    '#008000', // Dark Green
-  ];
+  const colorNames = Object.keys(colorMap);
 
   const rows = [];
   const maxColorsPerRow = 3;
 
-  for (let i = 0; i < colors.length; i += maxColorsPerRow) {
-    const rowColors = colors.slice(i, i + maxColorsPerRow);
+  for (let i = 0; i < colorNames.length; i += maxColorsPerRow) {
+    const rowColorNames = colorNames.slice(i, i + maxColorsPerRow);
     const row = (
       <div key={i} style={{ display: 'flex' }}>
-        {rowColors.map((color, index) => (
+        {rowColorNames.map((colorName, index) => (
           <div
             key={index}
-            onClick={() => handleColorChange(color)}
+            onClick={() => handleColorChange(colorMap[colorName])}
             style={{
-              backgroundColor: color,
+              backgroundColor: colorMap[colorName],
               borderRadius: '50%',
               width: '24px',
               height: '24px',
               margin: '6px',
               cursor: 'pointer',
             }}
+            title={colorName} // Display color name on hover
           ></div>
         ))}
       </div>
@@ -48,51 +51,47 @@ const CustomPopover = ({ handleColorChange, setSelectedTool }) => {
       <Popover.Body>
         {rows}
         <div
-  onClick={() => setSelectedTool("line")}
-  style={{ color: "green", fontWeight: "bold", padding: "12px" }}
->
-  <img
-    src={pen1}
-    alt=""
-    style={{
-      width: "80px",
-      height: "3px",
-      filter: "brightness(10%)", // Increase brightness to 150%
-    }}
-  />
-</div>
-<div
-  onClick={() => setSelectedTool("line2")}
-  style={{ color: "green", fontWeight: "bold", padding: "12px" }}
->
-  <img
-    src={pen2}
-    alt=""
-    style={{
-      width: "80px",
-      height: "5px",
-      filter: "brightness(10%)", // Increase brightness to 150%
-    }}
-  />
-</div>
-
-        
-
-<div
-  onClick={() => setSelectedTool("line3")}
-  style={{ color: "green", fontWeight: "bold", padding: "12px" }}
->
-  <img
-    src={pen3}
-    alt=""
-    style={{
-      width: "80px",
-      height: "6px",
-      filter: "brightness(10%)", // Increase brightness to 150%
-    }}
-  />
-</div>
-
+          onClick={() => setSelectedTool('line')}
+          style={{ color: 'green', fontWeight: 'bold', padding: '12px' }}
+        >
+          <img
+            src={pen1}
+            alt=""
+            style={{
+              width: '80px',
+              height: '3px',
+              filter: 'brightness(10%)', // Increase brightness to 150%
+            }}
+          />
+        </div>
+        <div
+          onClick={() => setSelectedTool('line2')}
+          style={{ color: 'green', fontWeight: 'bold', padding: '12px' }}
+        >
+          <img
+            src={pen2}
+            alt=""
+            style={{
+              width: '80px',
+              height: '5px',
+              filter: 'brightness(10%)', // Increase brightness to 150%
+            }}
+          />
+        </div>
+        <div
+          onClick={() => setSelectedTool('line3')}
+          style={{ color: 'green', fontWeight: 'bold', padding: '12px' }}
+        >
+          <img
+            src={pen3}
+            alt=""
+            style={{
+              width: '80px',
+              height: '6px',
+              filter: 'brightness(10%)', // Increase brightness to 150%
+            }}
+          />
+        </div>
       </Popover.Body>
     </Popover>
   );

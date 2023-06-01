@@ -9,7 +9,7 @@ import {
   addBoard,
   deleteBoard,
   updateBoardName,
-} from "../../Redux/Action/Action";
+} from "../../redux/action/action";
 import DashboardHeader from "./dashboardHeader";
 import { BiEdit } from "react-icons/bi";
 import { BsPlus, BsTrash } from "react-icons/bs";

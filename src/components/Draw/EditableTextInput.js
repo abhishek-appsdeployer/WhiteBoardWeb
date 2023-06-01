@@ -41,6 +41,7 @@ export function EditableTextInput({
   const style = getStyle(width, height);
   const [inputValue, setInputValue] = useState(value);
   const [disable, setDisable] = useState(false);
+  console.log(value)
 
   const handleChange = (event) => {
     const newValue = event.target.value;

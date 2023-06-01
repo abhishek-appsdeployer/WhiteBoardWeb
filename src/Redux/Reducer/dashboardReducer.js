@@ -1,4 +1,4 @@
-import { INCREMENT_BOARD_COUNT, ADD_BOARD, DELETE_BOARD, UPDATE_BOARD_NAME } from "../Action/Action";
+import { INCREMENT_BOARD_COUNT, ADD_BOARD, DELETE_BOARD, UPDATE_BOARD_NAME } from "../action/action";
 
 const initialState = {
   boardCount: 0,
