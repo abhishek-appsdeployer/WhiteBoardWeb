@@ -5,7 +5,7 @@ import Signup from "./components/Signup/Signup";
 import { Routes, Route, HashRouter } from "react-router-dom";
 import Emailverify from "./components/Signup/Emailverify";
 import Dashboard from "./components/Dashboard/Dashboard";
-import DrawingArea from "./components/draw/DrawingArea";
+import DrawingArea from "./components/draw/drawingArea";
 
 
 const App = () => {

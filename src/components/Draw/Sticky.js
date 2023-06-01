@@ -28,19 +28,16 @@ const Sticky = ({
   const [fontSize, setFontSize] = useState(16);
   const inputRef = useRef(null);
   const [editingText, setEditingText] = useState(true);
-  const [stickyColor,setStickyColor]=useState(color)
-  const [textWriting,setTextWriting]=useState(false)
+  const [stickyColor, setStickyColor] = useState(color);
+  const [textWriting, setTextWriting] = useState(false);
 
   const handleIncreaseFontSize = () => {
-
     setFontSize((prevFontSize) => prevFontSize + 2);
-   
   };
 
   const handleDecreaseFontSize = () => {
     setFontSize((prevFontSize) => Math.max(prevFontSize - 2, 10));
   };
-
 
   let timer;
 
@@ -64,12 +61,11 @@ const Sticky = ({
       }
     };
   }, [isSelected]);
-  function colorChange(c){
-    setStickyColor(c)
+  function colorChange(c) {
+    setStickyColor(c);
   }
-  function handleText(){
-    setTextWriting(!textWriting)
-    
+  function handleText() {
+    setTextWriting(!textWriting);
   }
 
   return (
@@ -140,7 +136,6 @@ const Sticky = ({
           // onDblClick={onChange}
           ref={textRef}
         />
-   
 
         {isText && (
           <StickyPopup
@@ -151,7 +146,6 @@ const Sticky = ({
             handleText={handleText}
             onDecreaseFontSize={handleDecreaseFontSize}
             onIncreaseFontSize={handleIncreaseFontSize}
-          
           />
         )}
         {textWriting && (
@@ -164,7 +158,7 @@ const Sticky = ({
             height={height}
             isEditing={textWriting}
             onChange={onChange}
-           
+
             // onKeyDown={()=>setEditingText(false)}
           />
         )}
