@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/WhiteBoardWeb/static/css/main.06d027eb.css",
-    "main.js": "/WhiteBoardWeb/static/js/main.a1d7e4e9.js",
+    "main.css": "/WhiteBoardWeb/static/css/main.f1612d9d.css",
+    "main.js": "/WhiteBoardWeb/static/js/main.23d9d9c0.js",
     "static/js/787.288ca066.chunk.js": "/WhiteBoardWeb/static/js/787.288ca066.chunk.js",
     "static/media/fa-solid-900.ttf": "/WhiteBoardWeb/static/media/fa-solid-900.4a2cd718d7031b732e76.ttf",
     "static/media/fa-brands-400.ttf": "/WhiteBoardWeb/static/media/fa-brands-400.150de8eaa454d669c405.ttf",
@@ -12,12 +12,12 @@
     "static/media/fa-v4compatibility.ttf": "/WhiteBoardWeb/static/media/fa-v4compatibility.0e3a648be390bd8cb094.ttf",
     "static/media/fa-v4compatibility.woff2": "/WhiteBoardWeb/static/media/fa-v4compatibility.68577e40f3e70067b5da.woff2",
     "index.html": "/WhiteBoardWeb/index.html",
-    "main.06d027eb.css.map": "/WhiteBoardWeb/static/css/main.06d027eb.css.map",
-    "main.a1d7e4e9.js.map": "/WhiteBoardWeb/static/js/main.a1d7e4e9.js.map",
+    "main.f1612d9d.css.map": "/WhiteBoardWeb/static/css/main.f1612d9d.css.map",
+    "main.23d9d9c0.js.map": "/WhiteBoardWeb/static/js/main.23d9d9c0.js.map",
     "787.288ca066.chunk.js.map": "/WhiteBoardWeb/static/js/787.288ca066.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.06d027eb.css",
-    "static/js/main.a1d7e4e9.js"
+    "static/css/main.f1612d9d.css",
+    "static/js/main.23d9d9c0.js"
   ]
 }
